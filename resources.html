@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimera R: Resursanvändning</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        @font-face {
+            font-family: 'CircularStd-Bold';
+            src: url('font/CircularStd-Bold.otf') format('opentype');
+        }
+
+        @font-face {
+            font-family: 'CircularStd-Book';
+            src: url('font/CircularStd-Book.otf') format('opentype');
+        }
+        @font-face {
+            font-family: 'IvarText-Regular';
+            src: url('font/IvarText-Regular.otf') format('opentype');
+        }
+        body {
+            font-family: 'CircularStd-Book', 'IvarText-Regular', Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #ebebeb;
+            -webkit-font-smoothing: antialiased; /* För Safari och Chrome */
+            -moz-osx-font-smoothing: grayscale; /* För Firefox på Mac */
+        }
+        .header {
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-size: 4em;
+            margin: 0;
+            font-family: 'CircularStd-Bold', Arial, sans-serif;
+            font-style: bold;
+        }
+
+        .header p {
+            font-size: 1.3em;
+            color: #000000;
+            font-family: 'IvarText-Regular', Arial, sans-serif;
+            max-width: 60%;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 60px;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .column {
+            flex: 1 1 250px;
+            background-color: #ebebeb;
+            padding: 20px;
+            border-radius: 0px;
+            box-shadow: none;
+            text-align: left;
+        }
+
+        .column h2 {
+            margin-bottom: 5; /* Ta bort extra radavstånd */
+            font-size: 0.9em;
+            font-family: 'CircularStd-Bold', Arial, sans-serif;
+            color: #000000;
+            letter-spacing: 0.03em;
+            font-style: bold;
+        }
+
+        .column p {
+            margin-top: 0; /* Ta bort extra radavstånd */
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            font-family: 'CircularStd-Book', Arial, sans-serif;
+            color: #000000;
+            font-style: normal;
+        }
+
+        .column .more-text {
+            display: none;
+            
+        }
+
+        .column .toggle-button {
+            cursor: pointer;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-top: 10px;
+            transition: transform 0.5s ease; /* Lägg till övergång för rotation */
+        }
+
+        .column .toggle-button svg {
+            width: 15px;
+            height: 15px;
+            transform: rotate(-45deg);
+            transition: transform 0.5s ease; /* Lägg till övergång för rotation */
+        }
+
+        .column .toggle-button:hover svg {
+            transform: rotate(45deg); /* Roterar pilen 90 grader vid hover */
+        }
+
+        .column.expanded .toggle-button svg {
+            transform: rotate(90deg); /* Roterar pilen 90 grader när expanderad */
+        }
+
+        .column.expanded .more-text {
+            display: block;
+        }
+
+        .column.expanded .toggle-button svg {
+            transform: rotate(45deg);
+        }
+
+        .column .number-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .column .number-options span {
+            display: inline-block;
+            width: 23px;
+            height: 23px;
+            line-height: 23px;
+            text-align: center;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            font-size: 0.8em; /* Minska font size */
+        }
+
+        .column .number-options span:hover {
+            background-color: rgb(0, 0, 0);
+            color: white;
+        }
+
+        .column .number-options span.selected {
+            background-color: rgb(0, 0, 0);
+            color: white;
+        }
+        .column label {
+            font-size: 0.9em; /* Ändra storlek på label */
+            margin-bottom: 10px; /* Lägg till marginal under label */
+            margin-top: 50px;
+            display: block; /* Gör label till blockelement */
+            font-family: 'CircularStd-Book', Arial, sans-serif;
+            color: #000000;
+            font-style: normal;
+        }
+        .column textarea {
+            width: calc(100% - 20px);
+            height: 100px;
+            padding: 10px;
+            border: none;
+            background: linear-gradient(to bottom, #5f5f5f 0.1px, transparent 1px) repeat-y; /* Ändra färg och tjocklek här */
+            background-size: 100% 20px; /* Justera avståndet mellan linjerna */
+            background-position: 0 5px; /* Flytta ned linjerna några pixlar */
+            margin-top: 10px;
+            font-family: 'CircularStd-Book', Arial, sans-serif;
+            font-size: 0.9em;
+            color: #000000;
+            line-height: 20px;
+            resize: none;
+            outline: none; /* Ta bort den svarta rutan */
+        }
+        
+
+        .submit-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 55px;
+}
+
+        .submit-button svg {
+            margin-left: 10px;
+            width: 40px; /* Anpassa efter behov */
+            height: 40px;
+        }
+
+
+        .slide-up {
+            transform: translateY(-100%);
+            transition: transform 1s ease-in-out;
+        }
+
+        #doughnutChart {
+            position: absolute;
+            top: 50px;
+            right: 50px;
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body class="resources-page">
+    <div class="header">
+        <h1>Minimera R: Resursanvändning</h1>
+        <p>Resursanvändningen ska minimeras både i bygg- och användningsskede. Det handlar om låg förbrukning av energi, uppvärmning, material, avfall, vatten och ett smart markutnyttjande. Det handlar också om att bättre nyttja de resurser som redan finns i befintlig byggd struktur, i form av t ex omfördelning och cirkulära flöden.
+        </p>
+    </div>
+    <div id="doughnutChart"></div>
+    <div class="container">
+        <div class="column">
+            <h2>KLIMATAVTRYCK</h2>
+            <p>Minimera mängden växthusgaser som frigörs till atmosfären...
+            <span class="more-text">i anslutning till projektets genomförande sett till hela livscykeln. Beakta orientering på platsen, geometri, design, formfaktor, stomval, materialens klimatavtryck och möjlighet till återbruk. Utred möjliga kompensatoriska åtgärder för att balansera klimatkalkylen som t.ex. biokol, inbyggt biogent kol, grönska och lokal elproduktion. Ett kraftigt minskat klimatavtryck från bygg- och anläggningsbranschen är en viktig nyckel för att klara Parisavtalets klimatmål avseende minskat global uppvärmning och leva upp till den nationella färdplanen för ett fossilfritt Sverige till 2045.</span>
+            </p>
+            <div class="toggle-button" onclick="toggleText(this)">
+                <svg id="Lager_1" data-name="Lager 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6.13 6.13">
+                    <defs>
+                        <style>
+                            .cls-1 {
+                                stroke-miterlimit: 10;
+                            }
+
+                            .cls-1, .cls-2 {
+                                fill: none;
+                                stroke: #000;
+                                stroke-linecap: round;
+                                stroke-width: 1px;
+                            }
+
+                            .cls-2 {
+                                stroke-linejoin: round;
+                            }
+                        </style>
+                    </defs>
+                    <polyline class="cls-2" points=".98 5.88 5.55 5.55 5.88 .98"/>
+                    <line class="cls-1" x1="5.55" y1="5.55" x2=".25" y2=".25"/>
+                </svg>
+            </div>
+            <label for="categoryF">På en skala från ett till fem, hur prioriterat är arbetet med Klimatavtryck i det aktuella projektet?</label>
+            <div class="number-options" id="numberOptionsF">
+                <span onclick="selectNumber(this, 'categoryF')">1</span>
+                <span onclick="selectNumber(this, 'categoryF')">2</span>
+                <span onclick="selectNumber(this, 'categoryF')">3</span>
+                <span onclick="selectNumber(this, 'categoryF')">4</span>
+                <span onclick="selectNumber(this, 'categoryF')">5</span>
+            </div>
+            <input type="hidden" id="categoryF" name="categoryF">
+            <label for="commentsF">Kommentarer:</label>
+            <textarea id="commentsF" name="commentsF" rows="4"></textarea>
+        </div>
+        <div class="column">
+            <h2>MARK</h2>
+            <p>Minimera arealen oexploaterad mark som tas i anspråk...
+            <span class="more-text">för byggnation genom att prioritera redan exploaterad mark för förtätning. Undvik nybyggnation på jordbruks-, skogs- och ängsmark. Bygg till, om och förädla i befintliga strukturer. Tillför gröna och blå värden till all icke-exploaterad urban yta och undvik att spränga bort berg. I centrala stadslägen kan det vara motiverad med hög exploatering för att utnyttja marken på bästa sätt.</span>
+            </p>
+            <div class="toggle-button" onclick="toggleText(this)">
+                <svg id="Lager_1" data-name="Lager 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6.13 6.13">
+                    <defs>
+                        <style>
+                            .cls-10 {
+                                stroke-miterlimit: 10;
+                            }
+
+                            .cls-10, .cls-20 {
+                                fill: none;
+                                stroke: #000;
+                                stroke-linecap: round;
+                                stroke-width: 1px;
+                            }
+
+                            .cls-20 {
+                                stroke-linejoin: round;
+                            }
+                        </style>
+                    </defs>
+                    <polyline class="cls-20" points=".98 5.88 5.55 5.55 5.88 .98"/>
+                    <line class="cls-10" x1="5.55" y1="5.55" x2=".25" y2=".25"/>
+                </svg>
+            </div>
+            <label for="categoryG">På en skala från ett till fem, hur prioriterat är arbetet med Mark i det aktuella projektet?
+            </label>
+            <div class="number-options" id="numberOptionsG">
+                <span onclick="selectNumber(this, 'categoryG')">1</span>
+                <span onclick="selectNumber(this, 'categoryG')">2</span>
+                <span onclick="selectNumber(this, 'categoryG')">3</span>
+                <span onclick="selectNumber(this, 'categoryG')">4</span>
+                <span onclick="selectNumber(this, 'categoryG')">5</span>
+            </div>
+            <input type="hidden" id="categoryG" name="categoryG">
+            <label for="commentsG">Kommentarer:</label>
+            <textarea id="commentsG" name="commentsG" rows="4"></textarea>
+        </div>
+        <div class="column">
+            <h2>ENERGI</h2>
+            <p>Minimera mängden energi som byggnaden/anläggningen förbrukar...
+                <span class="more-text">Beakta besparande och generativa lösningar för el, vatten och värme. Detta kan göras genom lokal energiproduktion, batterilösningar och delning av el inom grannskap för att kapa effekttoppar. Andra lösningar är omhändertagande och användning av regnvatten för att spara på färskvattenförbrukning. Beakta även isolering, glasmängder, köldbryggor och tekniska system. Att synliggöra energiförbrukning och att acceptera ett mer generöst temperaturspann på inomhustemperatur är exempel på energibesparande åtgärder som kan göra stor skillnad.</span>
+            </p>
+            <div class="toggle-button" onclick="toggleText(this)">
+                <svg id="Lager_1" data-name="Lager 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6.13 6.13">
+                    <defs>
+                        <style>
+                            .cls-100 {
+                                stroke-miterlimit: 10;
+                            }
+
+                            .cls-100, .cls-200 {
+                                fill: none;
+                                stroke: #000;
+                                stroke-linecap: round;
+                                stroke-width: 1px;
+                            }
+
+                            .cls-200 {
+                                stroke-linejoin: round;
+                            }
+                        </style>
+                    </defs>
+                    <polyline class="cls-200" points=".98 5.88 5.55 5.55 5.88 .98"/>
+                    <line class="cls-100" x1="5.55" y1="5.55" x2=".25" y2=".25"/>
+                </svg>
+            </div>
+            <label for="categoryH">På en skala från ett till fem, hur prioriterat är arbetet med Energi i det aktuella projektet?</label>
+            <div class="number-options" id="numberOptionsH">
+                <span onclick="selectNumber(this, 'categoryH')">1</span>
+                <span onclick="selectNumber(this, 'categoryH')">2</span>
+                <span onclick="selectNumber(this, 'categoryH')">3</span>
+                <span onclick="selectNumber(this, 'categoryH')">4</span>
+                <span onclick="selectNumber(this, 'categoryH')">5</span>
+            </div>
+            <input type="hidden" id="categoryH" name="categoryH">
+            <label for="commentsH">Kommentarer:</label>
+            <textarea id="commentsH" name="commentsH" rows="4"></textarea>
+        </div>
+        <div class="column">
+            <h2>PENGAR</h2>
+            <p>Ekonomi betyder hushållning. Det är viktigt att hushålla...
+                <span class="more-text">med alla resurser, även de ekonomiska. Kundens/samhällets ekonomiska satsning ska ge så stort hållbarhetsvärde som möjligt i relation till investeringen. Identifiera lågt hängande frukter i det aktuella projektet utifrån principen mesta hållbarhetsnytta per krona. Förstå kundens affär och behov. Beakta möjligheten till hållbarhetscertifiering och grön finansiering som ett sätt att öka det långsiktiga värdet. Förstå kundens affär och vilka behov som kundens slutkund har.</span>
+            </p>
+            <div class="toggle-button" onclick="toggleText(this)">
+                <svg id="Lager_1" data-name="Lager 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6.13 6.13">
+                    <defs>
+                        <style>
+                            .cls-1000 {
+                                stroke-miterlimit: 10;
+                            }
+
+                            .cls-1000, .cls-2000 {
+                                fill: none;
+                                stroke: #000;
+                                stroke-linecap: round;
+                                stroke-width: 1px;
+                            }
+
+                            .cls-2000 {
+                                stroke-linejoin: round;
+                            }
+                        </style>
+                    </defs>
+                    <polyline class="cls-2000" points=".98 5.88 5.55 5.55 5.88 .98"/>
+                    <line class="cls-1000" x1="5.55" y1="5.55" x2=".25" y2=".25"/>
+                </svg>
+            </div>
+            <label for="categoryI">På en skala från ett till fem, hur prioriterat är arbetet med Pengar i det aktuella projektet?
+            </label>
+            <div class="number-options" id="numberOptionsI">
+                <span onclick="selectNumber(this, 'categoryI')">1</span>
+                <span onclick="selectNumber(this, 'categoryI')">2</span>
+                <span onclick="selectNumber(this, 'categoryI')">3</span>
+                <span onclick="selectNumber(this, 'categoryI')">4</span>
+                <span onclick="selectNumber(this, 'categoryI')">5</span>
+            </div>
+            <input type="hidden" id="categoryI" name="categoryI">
+            <label for="commentsI">Kommentarer:</label>
+            <textarea id="commentsI" name="commentsI" rows="4"></textarea>
+        </div>
+        <div class="column">
+            <h2>RESURSUTNYTTJANDE</h2>
+            <p>Var sparsam med jordens resurser och minimera råvarutvinning...
+                <span class="more-text">Beakta materialet härkomst, undvik skadliga ämnen och arbeta med designen för att minska mängden materialspill. Beakta möjligheten till återbruk eller återvinning av olika material och produkter. Uppmuntra till cirkularitet och minimera mängden avfall och spill som genereras i projektet, även i driftskedet. Undvik rivning - se och uppmärksamma värdet i det befintliga beståndet!</span>
+            </p>
+            <div class="toggle-button" onclick="toggleText(this)">
+                <svg id="Lager_1" data-name="Lager 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6.13 6.13">
+                    <defs>
+                        <style>
+                            .cls-10000 {
+                                stroke-miterlimit: 10;
+                            }
+
+                            .cls-10000, .cls-20000 {
+                                fill: none;
+                                stroke: #000;
+                                stroke-linecap: round;
+                                stroke-width: 1px;
+                            }
+
+                            .cls-20000 {
+                                stroke-linejoin: round;
+                            }
+                        </style>
+                    </defs>
+                    <polyline class="cls-20000" points=".98 5.88 5.55 5.55 5.88 .98"/>
+                    <line class="cls-10000" x1="5.55" y1="5.55" x2=".25" y2=".25"/>
+                </svg>
+            </div>
+            <label for="categoryJ">På en skala från ett till fem, hur prioriterat är arbetet med Resursutnyttjande i det aktuella projektet?
+            </label>
+            <div class="number-options" id="numberOptionsJ">
+                <span onclick="selectNumber(this, 'categoryJ')">1</span>
+                <span onclick="selectNumber(this, 'categoryJ')">2</span>
+                <span onclick="selectNumber(this, 'categoryJ')">3</span>
+                <span onclick="selectNumber(this, 'categoryJ')">4</span>
+                <span onclick="selectNumber(this, 'categoryJ')">5</span>
+            </div>
+            <input type="hidden" id="categoryJ" name="categoryJ">
+            <label for="commentsJ">Kommentarer:</label>
+            <textarea id="commentsJ" name="commentsJ" rows="4"></textarea>
+        </div>
+    </div>
+    <button class="submit-button" onclick="submitAndNext()"title="Nästa">
+        <svg id="Lager_3" data-name="Lager 3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+            <defs>
+              <style>
+                .cls-71 {
+                  stroke-linejoin: round;
+                }
+          
+                .cls-71, .cls-72 {
+                  fill: none;
+                  stroke: #000;
+                  stroke-linecap: round;
+                  stroke-width: 1.7px;
+                }
+                .cls-73 {
+                    fill: none;
+                    stroke: #000;
+                    stroke-linecap: round;
+                    stroke-width: 1px;
+                  }
+          
+                .cls-72 {
+                  stroke-miterlimit: 10;
+                }
+                .submit-button:hover .cls-71, .submit-button:hover .cls-72 {
+                    stroke: #fff; /* Vit färg vid hover */
+                }
+                .submit-button:hover .cls-73 {
+                    fill: #000; /* Svart fyllning vid hover */
+                }
+              </style>
+            </defs>
+            <circle class="cls-73" cx="15.65" cy="15.65" r="15"/>
+            <g>
+              <polyline class="cls-71" points="6.7 17.58 15.65 25.33 24.59 17.58"/>
+              <line class="cls-72" x1="15.65" y1="25.33" x2="15.65" y2="5.96"/>
+            </g>
+          </svg>
+    </button>
+
+    <script>
+        function toggleText(button) {
+            const column = button.closest('.column');
+            column.classList.toggle('expanded');
+        }
+
+        var chart = echarts.init(document.getElementById('doughnutChart'));
+
+        function updateChart() {
+    const totalCategories = 15;
+    let storedProgress = JSON.parse(localStorage.getItem('progress')) || { page1: 0, page2: 0, page3: 0 };
+
+    let currentPage = "page2"; // This is the "Time" page
+    let categories = ['categoryF', 'categoryG', 'categoryH', 'categoryI', 'categoryJ'];
+
+    // Count only the answers for this page
+    let filledCategories = categories.filter(id => document.getElementById(id).value !== "").length;
+
+    // Save progress for this page only
+    storedProgress[currentPage] = filledCategories;
+    localStorage.setItem('progress', JSON.stringify(storedProgress));
+
+    // Calculate total filled categories across all pages
+    let totalFilled = (storedProgress.page1 || 0) + (storedProgress.page2 || 0) + (storedProgress.page3 || 0);
+
+    // Prevent over-counting
+    if (totalFilled > totalCategories) {
+        totalFilled = totalCategories;
+    }
+
+    let percentage = Math.round((totalFilled / totalCategories) * 100);
+
+            var option = {
+                series: [
+                {
+                name: 'Bakgrund',
+                type: 'pie',
+                radius: ['50%', '70%'],
+                avoidLabelOverlap: false,
+                label: {
+                    show: false
+                },
+                labelLine: {
+                    show: false
+                },
+                data: [
+                    { 
+                        value: totalCategories, 
+                        name: 'Bakgrund', 
+                        itemStyle: { 
+                            color: '#d3d3d3' // Ljusgrå färg för bakgrunden
+                        } 
+                    }
+                ]
+            },
+            
+                    {
+                        name: 'Procent',
+                        type: 'pie',
+                        radius: ['50%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            show: true,
+                            position: 'center',
+                            formatter: totalFilled > 0 ? `${percentage}%` : '',
+                            fontSize: 30,
+                            fontWeight: 'bold',
+                            fontFamily: 'CircularStd-Bold',
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: '30',
+                                fontWeight: 'bold'
+                            }
+                        },
+                        labelLine: {
+                            show: false
+                        },
+                        data: [
+                    { 
+                        value: totalFilled, 
+                        name: 'Fylld', 
+                        itemStyle: { 
+                            color: '#000000', 
+                            borderRadius: [10, 10, 10, 10] // Rundade kanter på båda sidor 
+                        } 
+                    },
+                    { 
+                        value: Math.max(totalCategories - totalFilled, 0), // Prevent negative values 
+                        name: 'Ej fylld', 
+                        itemStyle: { color: 'transparent' } 
+                    }
+                ]
+            }
+        ]
+    };
+
+            chart.setOption(option);
+        }
+
+        function selectNumber(element, categoryId) {
+        const numberOptions = element.parentElement.querySelectorAll('span');
+        numberOptions.forEach(option => option.classList.remove('selected'));
+        element.classList.add('selected');
+        document.getElementById(categoryId).value = element.textContent;
+        updateChart(); // Lägg till detta anrop för att uppdatera diagrammet
+    }
+
+        function submitAndNext() {
+            submitValues();
+            goToNextPage();
+        }
+
+        function submitValues() {
+            const categoryF = document.getElementById('categoryF').value;
+            const commentsF = document.getElementById('commentsF').value;
+            const categoryG = document.getElementById('categoryG').value;
+            const commentsG = document.getElementById('commentsG').value;
+            const categoryH = document.getElementById('categoryH').value;
+            const commentsH = document.getElementById('commentsH').value;
+            const categoryI = document.getElementById('categoryI').value;
+            const commentsI = document.getElementById('commentsI').value;
+            const categoryJ = document.getElementById('categoryJ').value;
+            const commentsJ = document.getElementById('commentsJ').value;
+
+            localStorage.setItem('categoryF', categoryF);
+            localStorage.setItem('commentsF', commentsF);
+            localStorage.setItem('categoryG', categoryG);
+            localStorage.setItem('commentsG', commentsG);
+            localStorage.setItem('categoryH', categoryH);
+            localStorage.setItem('commentsH', commentsH);
+            localStorage.setItem('categoryI', categoryI);
+            localStorage.setItem('commentsI', commentsI);
+            localStorage.setItem('categoryJ', categoryJ);
+            localStorage.setItem('commentsJ', commentsJ);
+
+        }
+
+        function goToNextPage() {
+            document.body.classList.add('slide-up');
+            setTimeout(() => {
+                window.location.href = 'time.html';
+            }, 1000); // Match the duration of the slide-up transition
+        }
+
+        // Initial chart update
+        window.onload = updateChart;
+    </script>
+</body>
+</html>

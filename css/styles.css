@@ -1,0 +1,34 @@
+/* General styles for all pages */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+h1 {
+    text-align: center;
+}
+
+/* Specific styles for each page */
+body.time-page {
+    background-color: #ebebeb;
+}
+
+body.result-page {
+    background-color: lightgray;
+}
+
+body.vision-page {
+    background-color: #ebebeb;
+}
+
+body.tool-page {
+    background-color: #ebebeb;
+}
+
+
+body.resources-page {
+    background-color: #ebebeb;
+}

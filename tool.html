@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verktyget</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        @font-face {
+            font-family: 'CircularStd-Bold';
+            src: url('font/CircularStd-Bold.otf') format('opentype');
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'CircularStd-Bold', sans-serif;
+            transition: transform 1s ease-in-out; /* Add transition for page slide up */
+        }
+
+        .slide-up {
+            transform: translateY(-100%); /* Slide the page up */
+        }
+
+        h1 {
+            color: #ffffff; /* Set text color */
+            font-size: 100px; /* Set text size */
+            text-align: center; /* Center the text */
+            margin-top: 20px; /* Add some margin at the top */
+        }
+
+        .arrow {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 48px;
+            color: #ffffff;
+            transform: rotate(90deg); /* Rotate the arrow to point downwards */
+            opacity: 0; /* Initially hidden */
+            transition: opacity 1s ease-in-out; /* Smooth transition for opacity */
+        }
+
+        .arrow.show {
+            opacity: 1; /* Show the arrow */
+            animation: blink 1s infinite; /* Blinking animation */
+        }
+
+        @keyframes blink {
+            0%, 100% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body class="tool-page">
+    <h1>Verktyget</h1>
+    <i class="fa-solid fa-arrow-right arrow"></i>
+    <script>
+        // Show the arrow when the page loads
+        window.addEventListener('load', () => {
+            const arrow = document.querySelector('.arrow');
+            arrow.classList.add('show');
+        });
+
+        // Add click event listener to the arrow to navigate to usage.html
+        const arrow = document.querySelector('.arrow');
+        arrow.addEventListener('click', () => {
+            document.body.classList.add('slide-up');
+            setTimeout(() => {
+                window.location.href = 'projekt.html';
+            }, 1000); // Match the duration of the slide-up transition
+        });
+    </script>
+</body>
+</html>

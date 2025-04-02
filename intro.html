@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ART</title>
+  <style>
+    @font-face {
+      font-family: 'CircularStd-Bold';
+      src: url('font/CircularStd-Bold.otf') format('opentype');
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'CircularStd-Bold', sans-serif;
+      background-color: #ebebeb; /* Set background color to match the lower field */
+      transition: transform 1s ease-in-out; /* Add transition for page slide up */
+    }
+
+    .slide-up {
+      transform: translateY(-100%); /* Slide the page up */
+    }
+
+    .diagonal-split {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .diagonal-split::before,
+    .diagonal-split::after {
+      content: '';
+      position: absolute;
+      width: 200%; /* Increased width to ensure full coverage */
+      height: 200%; /* Increased height to ensure full coverage */
+      top: -50%; /* Adjusted to center larger area */
+      left: -50%; /* Adjusted to center larger area */
+    }
+
+    .diagonal-split::before {
+      background-color: #d7d7d7; /* Dark gray */
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+
+    .diagonal-split::after {
+      background-color: #ebebeb; /* Light gray */
+      clip-path: polygon(0 100%, 100% 0, 100% 100%, 0 100%);
+      transform-origin: 50% 50%; /* Center of the screen (pivot point) */
+      transform: rotate(0deg);
+      transition: transform 3s ease-in-out;
+    }
+
+    .diagonal-split.animate::after {
+      transform: rotate(calc(var(--angle, 0deg)));
+    }
+
+    .center-text {
+      position: absolute;
+      z-index: 2; /* Ensure the text is on top */
+      font-size: 100px; /* Adjust font size as needed */
+      color: #ffffff; /* Adjust text color as needed */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      letter-spacing: 20px; /* Increase letter spacing */
+    }
+
+    .center-text span {
+      display: inline-block;
+      transition: transform 3s ease-in-out;
+      transform: translateY(5px); /* Move text 5px down initially */
+    }
+
+    .center-text.animate .A,
+    .center-text.animate .T {
+      transform: translateY(-40px); /* Move text 30px up from initial position */
+    }
+
+    .center-text.animate .R {
+      transform: translateY(50px); /* Move text 30px down from initial position */
+    }
+
+    .next-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px;
+    margin-right: 55px;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.5s ease; /* Smooth transition for showing the button */
+    z-index: 3; /* Ensure the button is on top */
+    border: none;
+    background: transparent;
+}
+
+.next-button.show {
+    opacity: 1; /* Show the button when the animation is complete */
+}
+
+.next-button svg {
+    width: 40px; /* Anpassa efter behov */
+    height: 40px;
+    transition: fill 0.5s ease, stroke 0.5s ease; /* Smooth transition for fill and stroke */
+}
+
+.next-button:hover .cls-10 {
+    fill: #000; /* Svart fyllning vid hover */
+}
+
+.next-button:hover .cls-1,
+.next-button:hover .cls-2 {
+    stroke: #fff; /* Vit stroke vid hover */
+}
+
+.hover-text {
+  position: absolute; 
+  bottom: 90px; 
+  display: none; /* Initially hidden */
+    transform: rotate(90deg); /* Rotate text 90 degrees */
+    color: #000; /* Adjust text color as needed */
+    font-family: 'CircularStd-Bold', sans-serif;
+    font-size: 2em;
+}
+
+.next-button:hover .hover-text {
+    display: block; /* Show text on hover */
+}
+  </style>
+</head>
+<body>
+  <div class="diagonal-split"></div>
+  <div class="center-text">
+    <span class="A">A</span>
+    <span class="R">R</span>
+    <span class="T">T</span>
+  </div>
+  <button class="next-button" onclick="next()" title="Nästa">
+    <svg id="Lager_3" data-name="Lager 3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+      <defs>
+        <style>
+          .cls-1 {
+            stroke-linejoin: round;
+          }
+    
+          .cls-1, .cls-2 {
+            fill: none;
+            stroke: #000;
+            stroke-linecap: round;
+            stroke-width: 1.7px;
+          }
+          .cls-10 {
+            fill: none;
+            stroke: #000;
+            stroke-linecap: round;
+            stroke-width: 1px;
+          }
+    
+          .cls-2 {
+            stroke-miterlimit: 10;
+          }
+        </style>
+      </defs>
+      <circle class="cls-10" cx="15.65" cy="15.65" r="15"/>
+      <g>
+        <polyline class="cls-1" points="6.7 17.58 15.65 25.33 24.59 17.58"/>
+        <line class="cls-2" x1="15.65" y1="25.33" x2="15.65" y2="5.96"/>
+      </g>
+    </svg>
+</button>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Get reference to the diagonal-split element
+        const diagonalSplit = document.querySelector('.diagonal-split');
+        const centerText = document.querySelector('.center-text');
+        const nextButton = document.querySelector('.next-button'); // Uppdaterad referens
+
+        // Calculate screen dimensions
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        // Calculate the desired rotation angle in degrees
+        const angle = Math.atan2(height, width) * (180 / Math.PI);
+
+        // Add click event listener to start the animation
+        document.addEventListener('click', () => {
+            diagonalSplit.style.setProperty('--angle', `${angle}deg`);
+            diagonalSplit.classList.add('animate');
+            centerText.classList.add('animate');
+
+            // Show the next button after the animation is complete
+            setTimeout(() => {
+                nextButton.classList.add('show');
+            }, 3000); // Match the duration of the rotation animation
+        });
+
+        // Add click event listener to the next button to navigate to vision.html
+        nextButton.addEventListener('click', () => {
+            document.body.classList.add('slide-up');
+            setTimeout(() => {
+                window.location.href = 'usage.html';
+            }, 1000); // Match the duration of the slide-up transition
+        });
+    });
+  </script>
+</body>
+</html>
