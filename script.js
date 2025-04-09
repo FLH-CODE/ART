@@ -743,6 +743,23 @@ async function exportPDF() {
                     
                     // Create a temporary element to hold the project info print content
                     renderContainer.innerHTML = html;
+                    
+                    // Fill in values from localStorage for project info fields
+                    const fieldIds = ['datum', 'projekt', 'affarsomrade', 'plats', 'skede', 
+                                     'bestallare', 'team', 'forfattare'];
+                                     
+                    fieldIds.forEach(fieldId => {
+                        const value = localStorage.getItem(fieldId) || formData[fieldId] || '';
+                        const input = renderContainer.querySelector(`#${fieldId}`);
+                        if (input) input.value = value;
+                        
+                        // For date field, also update the display element
+                        if (fieldId === 'datum') {
+                            const dateDisplay = renderContainer.querySelector('#datum-display');
+                            if (dateDisplay) dateDisplay.textContent = value;
+                        }
+                    });
+                    
                     await new Promise(resolve => setTimeout(resolve, 500));
                 } catch (error) {
                     console.error(`Error loading ${pdfPages[i]}:`, error);
@@ -1064,6 +1081,7 @@ window.onload = () => {
     localStorage.removeItem('formData'); // Clear saved form data
     formData = {}; // Reset the formData object
     console.log('Form data cleared on page load.');
+    updateChart();
     loadPage(0); // Load the first page
 };
 
