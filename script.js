@@ -428,7 +428,8 @@ function positionLabels(labelsContainer, categories) {
     });
 }
 
-function updateChart(container = document) {
+// Create a helper function for chart operations
+function updateProgressChart(container = document, forceReset = false) {
     // Don't show progress chart on certain pages
     if (currentPage === 0 || currentPage === 1 || currentPage === pages.length - 1) {
         const existingChart = document.getElementById('doughnutChart');
@@ -450,8 +451,8 @@ function updateChart(container = document) {
         chartContainer = document.createElement('div');
         chartContainer.id = 'doughnutChart';
         chartContainer.style.width = '100%';
-        chartContainer.style.height = '400px'; // Set a default height
-        container.appendChild(chartContainer); // Append it to the provided container
+        chartContainer.style.height = '400px';
+        container.appendChild(chartContainer);
     }
 
     // Get existing chart instance or create new one
@@ -462,19 +463,25 @@ function updateChart(container = document) {
 
     const totalCategories = 15; // Total number of categories across all pages
     
-    // Parse stored progress or initialize empty object
-    const storedProgress = JSON.parse(localStorage.getItem('progress')) || { page1: 0, page2: 0, page3: 0 };
+    // Calculate filled categories and percentage
+    let totalFilled = 0;
+    
+    if (!forceReset) {
+        // Parse stored progress or initialize empty object
+        const storedProgress = JSON.parse(localStorage.getItem('progress')) || { page1: 0, page2: 0, page3: 0 };
 
-    // Recalculate progress for the current page based on selected values
-    const currentPageKey = `page${currentPage + 1}`;
-    const currentPageInputs = container.querySelectorAll('.number-options span.selected');
-    storedProgress[currentPageKey] = currentPageInputs.length;
+        // Recalculate progress for the current page based on selected values
+        const currentPageKey = `page${currentPage + 1}`;
+        const currentPageInputs = container.querySelectorAll('.number-options span.selected');
+        storedProgress[currentPageKey] = currentPageInputs.length;
 
-    // Save updated progress to localStorage
-    localStorage.setItem('progress', JSON.stringify(storedProgress));
+        // Save updated progress to localStorage
+        localStorage.setItem('progress', JSON.stringify(storedProgress));
 
-    // Calculate total filled categories across all pages
-    const totalFilled = Object.values(storedProgress).reduce((sum, value) => sum + value, 0);
+        // Calculate total filled categories across all pages
+        totalFilled = Object.values(storedProgress).reduce((sum, value) => sum + value, 0);
+    }
+
     const percentage = Math.round((totalFilled / totalCategories) * 100);
 
     const option = {
@@ -519,6 +526,13 @@ function updateChart(container = document) {
             chart.resize();
         }
     });
+    
+    return chart;
+}
+
+// Update the updateChart function to use the helper
+function updateChart(container = document) {
+    return updateProgressChart(container, false);
 }
 
 function restoreInputs(container = document) {
@@ -579,6 +593,7 @@ function saveInputs() {
     updateChart();
 }
 
+// Update resetForm to use the helper
 function resetForm() {
     if (confirm('Are you sure you want to reset the form? All data will be lost.')) {
         // Clear the combined formData object
@@ -596,48 +611,8 @@ function resetForm() {
         // Reset the in-memory formData object
         formData = {};
         
-        // Clear any existing chart
-        const chartContainer = document.getElementById('doughnutChart');
-        if (chartContainer) {
-            const chart = echarts.getInstanceByDom(chartContainer);
-            if (chart) {
-                chart.clear();
-                // Reset to empty state (0%)
-                chart.setOption({
-                    series: [
-                        {
-                            name: 'Background',
-                            type: 'pie',
-                            radius: ['50%', '70%'],
-                            avoidLabelOverlap: false,
-                            label: { show: false },
-                            labelLine: { show: false },
-                            data: [
-                                { value: 15, name: 'Background', itemStyle: { color: '#d3d3d3' } }
-                            ]
-                        },
-                        {
-                            name: 'Progress',
-                            type: 'pie',
-                            radius: ['50%', '70%'],
-                            avoidLabelOverlap: false,
-                            label: {
-                                show: true,
-                                position: 'center',
-                                formatter: `0%`,
-                                fontSize: 20,
-                                fontWeight: 'bold'
-                            },
-                            labelLine: { show: false },
-                            data: [
-                                { value: 0, name: 'Filled', itemStyle: { color: '#000000' } },
-                                { value: 15, name: 'Empty', itemStyle: { color: 'transparent' } }
-                            ]
-                        }
-                    ]
-                }, true);
-            }
-        }
+        // Clear any existing chart and reset to 0%
+        updateProgressChart(document, true);
         
         console.log('Form data reset completely.');
         loadPage(0); // Reload the first page
