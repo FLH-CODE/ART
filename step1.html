@@ -170,10 +170,7 @@
         }
         
 
-        .slide-up {
-            transform: translateY(-100%);
-            transition: transform 1s ease-in-out;
-        }
+
     </style>
 </head>
 <body class="usage-page">
@@ -406,12 +403,7 @@
         document.getElementById(categoryId).value = element.textContent;
     }
 
-        function goToNextPage() {
-            document.body.classList.add('slide-up');
-            setTimeout(() => {
-                window.location.href = 'resources.html';
-            }, 1000); // Match the duration of the slide-up transition
-        }
+
     </script>
 </body>
 </html>

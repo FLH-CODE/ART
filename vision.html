@@ -19,28 +19,19 @@
             src: url('font/IvarText-Regular.otf') format('opentype');
         }
 
-        body, html {
-
+        body {
+            font-family: 'CircularStd-Book', 'IvarText-Regular', Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
             background-color: #ebebeb;
-            overflow: hidden;
-            font-family: 'CircularStd-Bold', sans-serif;
-
+            -webkit-font-smoothing: antialiased; /* För Safari och Chrome */
+            -moz-osx-font-smoothing: grayscale; /* För Firefox på Mac */
         }
 
         .slide-up {
             transform: translateY(-100%); /* Slide the page up */
         }
 
-        .usage-page {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 60px;
-            justify-content: center;
-            padding: 20px;
-            margin: 20px;
-        }
-
-  
         .header {
             padding: 20px;
         }
@@ -59,53 +50,40 @@
             font-style: bold;
         }
 
-
-
         .content {
-            display: flex;
-            justify-content: flex-start; /* Align items to the start (left) */
-            margin-top: 20px;
-            width: 70%; /* 4/5 of the page width */
+            display: flex;    
+            width: 100%;
+            max-width: 100em;
+            min-width: 50em;
+            flex-shrink: 0; /* Prevent shrinking during transitions */
         }
 
-        .column {
-            flex: 5;
+        .flexColumn {
             margin-right: 40px;
-            color: #000000;
-            font-size: 15px;
-            text-align: left; /* Ensure text is left-aligned */
-            font-family: 'IvarText-Regular', sans-serif;
-            line-height: 1.6; /* Increase line height */
         }
 
-        .column p {
+        .flexColumn p {
             font-size: 1.3em;
             color: #000000;
             font-family: 'IvarText-Regular', Arial, sans-serif;
-            max-width: 100%;
         }
 
     </style>
 </head>
-<body>
-    <div class="usage-page">
- 
+<body class="usage-page">
             <div class="header">
                 <h2>HÅLLBARHETSVISION</h2> 
                 <h1>ART</h1>
 
                 <div class="content">
-                    <div class="column">
+                    <div class="flexColumn">
                         <p>Vi på FOJAB arbetar för en långsiktigt hållbar utveckling och är övertygade om att arkitektur kan bidra till att lösa samhällsutmaningar och skapa mervärden för alla. Gemensamt behöver vi ta krafttag för att snabbt minska koldioxidutsläppen och hitta fler lösningar på de stora utmaningarna kopplade till social hållbarhet och folkhälsa som vi står inför. Vi måste tillsammans tänka cirkulärt i alla skeden, hjälpas åt att omformulera tidigare sanningar och bidra till att mynta nya begrepp och arbetssätt.</p>
                     </div>
-                    <div class="column">
+                    <div class="flexColumn">
                         <p>Tre aspekter är centrala för oss när vi pratar om hållbarhet kopplat till vår verksamhet: Användning, Tid och Resurser. Det vi skapar ska kunna användas så mycket som möjligt under så lång tid som möjligt med ett så litet fotavtryck som möjligt. Tillsammans med våra kunder gör vi en bedömning av hållbarhetspotentialen i varje enskilt uppdrag som sedan utgör grund för målformulering, beslut och utvärdering. När vi verkar för multianvändning, kärlek över tid och rätt material på rätt plats skapar vi hållbar arkitektur på riktigt!</p>
                     </div>
             </div>
             </div>
-        </div>
-
-
 
 </body>
 </html>
