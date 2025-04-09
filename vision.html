@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hållbarhetsvision</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
     <style>
         @font-face {
             font-family: 'CircularStd-Bold';
@@ -20,47 +20,46 @@
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
+
             background-color: #ebebeb;
             overflow: hidden;
             font-family: 'CircularStd-Bold', sans-serif;
-            transition: transform 1s ease-in-out; /* Add transition for page slide up */
+
         }
 
         .slide-up {
             transform: translateY(-100%); /* Slide the page up */
         }
 
-        .container {
+        .usage-page {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 60px;
+            justify-content: center;
+            padding: 20px;
+            margin: 20px;
+        }
+
+  
+        .header {
             padding: 20px;
         }
 
-        .content-container {
-            margin-left: 20px; /* Add left margin to align with columns */
+        .header h1 {
+            font-size: 4em;
+            margin: 0;
+            font-family: 'CircularStd-Bold', Arial, sans-serif;
+            font-style: bold;
         }
 
-        .sub-header {
-            color: #000000;
-            font-size: 20px;
-            padding: 40px;
-            margin-top: 100px;
-            margin-bottom: 0px;
-            letter-spacing: 0.3em;
-            font-family: 'circularstd-book', sans-serif;
+        .header h2 {
+            font-size: 2em;
+            margin: 0;
+            font-family: 'CircularStd-Bold', Arial, sans-serif;
+            font-style: bold;
         }
 
-        h1 {
-            color: #000000; /* Set text color */
-            font-size: 60px; /* Set text size */
-            text-align: left; /* Align the text to the left */
-            margin-top: 0px; /* Add some margin at the top */
-            padding: 40px;
-            font-family: 'circularstd-bold', sans-serif;
-            letter-spacing: 0.3em;
-        }
+
 
         .content {
             display: flex;
@@ -70,8 +69,8 @@
         }
 
         .column {
-            flex: 1;
-            padding: 40px;
+            flex: 5;
+            margin-right: 40px;
             color: #000000;
             font-size: 15px;
             text-align: left; /* Ensure text is left-aligned */
@@ -79,63 +78,34 @@
             line-height: 1.6; /* Increase line height */
         }
 
-        .arrow {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            font-size: 48px;
-            color: #ffffff;
-            transform: rotate(90deg); /* Rotate the arrow to point downwards */
-            opacity: 0; /* Initially hidden */
-            transition: opacity 1s ease-in-out; /* Smooth transition for opacity */
+        .column p {
+            font-size: 1.3em;
+            color: #000000;
+            font-family: 'IvarText-Regular', Arial, sans-serif;
+            max-width: 100%;
         }
 
-        .arrow.show {
-            opacity: 1; /* Show the arrow */
-            animation: blink 1s infinite; /* Blinking animation */
-        }
-
-        @keyframes blink {
-            0%, 100% {
-                opacity: 0;
-            }
-            50% {
-                opacity: 1;
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="content-container">
-            <div class="sub-header">HÅLLBARHETSVISION</div>
-            <h1>ART</h1>
-            <div class="content">
-                <div class="column">
-                    <p>Vi på FOJAB arbetar för en långsiktigt hållbar utveckling och är övertygade om att arkitektur kan bidra till att lösa samhällsutmaningar och skapa mervärden för alla. Gemensamt behöver vi ta krafttag för att snabbt minska koldioxidutsläppen och hitta fler lösningar på de stora utmaningarna kopplade till social hållbarhet och folkhälsa som vi står inför. Vi måste tillsammans tänka cirkulärt i alla skeden, hjälpas åt att omformulera tidigare sanningar och bidra till att mynta nya begrepp och arbetssätt.</p>
-                </div>
-                <div class="column">
-                    <p>Tre aspekter är centrala för oss när vi pratar om hållbarhet kopplat till vår verksamhet: Användning, Tid och Resurser. Det vi skapar ska kunna användas så mycket som möjligt under så lång tid som möjligt med ett så litet fotavtryck som möjligt. Tillsammans med våra kunder gör vi en bedömning av hållbarhetspotentialen i varje enskilt uppdrag som sedan utgör grund för målformulering, beslut och utvärdering. När vi verkar för multianvändning, kärlek över tid och rätt material på rätt plats skapar vi hållbar arkitektur på riktigt!</p>
-                </div>
+    <div class="usage-page">
+ 
+            <div class="header">
+                <h2>HÅLLBARHETSVISION</h2> 
+                <h1>ART</h1>
+
+                <div class="content">
+                    <div class="column">
+                        <p>Vi på FOJAB arbetar för en långsiktigt hållbar utveckling och är övertygade om att arkitektur kan bidra till att lösa samhällsutmaningar och skapa mervärden för alla. Gemensamt behöver vi ta krafttag för att snabbt minska koldioxidutsläppen och hitta fler lösningar på de stora utmaningarna kopplade till social hållbarhet och folkhälsa som vi står inför. Vi måste tillsammans tänka cirkulärt i alla skeden, hjälpas åt att omformulera tidigare sanningar och bidra till att mynta nya begrepp och arbetssätt.</p>
+                    </div>
+                    <div class="column">
+                        <p>Tre aspekter är centrala för oss när vi pratar om hållbarhet kopplat till vår verksamhet: Användning, Tid och Resurser. Det vi skapar ska kunna användas så mycket som möjligt under så lång tid som möjligt med ett så litet fotavtryck som möjligt. Tillsammans med våra kunder gör vi en bedömning av hållbarhetspotentialen i varje enskilt uppdrag som sedan utgör grund för målformulering, beslut och utvärdering. När vi verkar för multianvändning, kärlek över tid och rätt material på rätt plats skapar vi hållbar arkitektur på riktigt!</p>
+                    </div>
+            </div>
             </div>
         </div>
-    </div>
-    <div class="arrow">&#x2193;</div>
-    <script>
-        // Show the arrow when the page loads
-        window.addEventListener('load', () => {
-            const arrow = document.querySelector('.arrow');
-            arrow.classList.add('show');
-        });
 
-        // Add click event listener to the arrow to navigate to tool.html
-        const arrow = document.querySelector('.arrow');
-        arrow.addEventListener('click', () => {
-            document.body.classList.add('slide-up');
-            setTimeout(() => {
-                window.location.href = 'tool.html';
-            }, 1000); // Match the duration of the slide-up transition
-        });
-    </script>
+
+
 </body>
 </html>

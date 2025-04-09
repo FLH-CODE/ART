@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projekt</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        @font-face {
+            font-family: 'CircularStd-Bold';
+            src: url('font/CircularStd-Bold.otf') format('opentype');
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'CircularStd-Bold', sans-serif;
+            background-color: #ebebeb; /* Set background color to match the other pages */
+            transition: transform 1s ease-in-out; /* Add transition for page slide up */
+        }
+
+        .slide-up {
+            transform: translateY(-100%); /* Slide the page up */
+        }
+
+        #custom-contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            flex: 1;
+            margin-right: 1rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            flex: 2;
+            padding: 10px;
+            border: none;
+            border-bottom: 2px solid #000;
+            background: none;
+            outline: none;
+        }
+
+        textarea {
+            resize: none;
+            height: 100px;
+        }
+
+                .arrow {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 48px;
+            color: #ffffff;
+            transform: rotate(90deg); /* Rotate the arrow to point downwards */
+            opacity: 0; /* Initially hidden */
+            transition: opacity 1s ease-in-out; /* Smooth transition for opacity */
+        }
+
+        .arrow.show {
+            opacity: 1; /* Show the arrow */
+            animation: blink 1s infinite; /* Blinking animation */
+        }
+
+
+    </style>
+</head>
+<body>
+
+<div id="custom-contact-form">
+    <form id="contactForm" action="https://example.com/submit-form" method="POST">
+        <h1>Projektformulär</h1>
+        <div class="form-group">
+            <label for="datum">Datum</label>
+            <input type="date" id="datum" name="datum" required>
+        </div>
+        <div class="form-group">
+            <label for="projekt">Vilket projekt</label>
+            <input type="text" id="projekt" name="projekt" placeholder="Ange projekt" required>
+        </div>
+        <div class="form-group">
+            <label for="affarsomrade">Vilket affärsområde</label>
+            <input type="text" id="affarsomrade" name="affarsomrade" placeholder="Ange affärsområde" required>
+        </div>
+        <div class="form-group">
+            <label for="plats">Plats</label>
+            <input type="text" id="plats" name="plats" placeholder="Ange plats" required>
+        </div>
+        <div class="form-group">
+            <label for="skede">Vilket skede</label>
+            <input type="text" id="skede" name="skede" placeholder="Ange skede" required>
+        </div>
+        <div class="form-group">
+            <label for="bestallare">Beställare</label>
+            <input type="text" id="bestallare" name="bestallare" placeholder="Ange beställare" required>
+        </div>
+        <div class="form-group">
+            <label for="team">Team</label>
+            <input type="text" id="team" name="team" placeholder="Ange team" required>
+        </div>
+        <div class="form-group">
+            <label for="forfattare">Författare</label>
+            <input type="text" id="forfattare" name="forfattare" placeholder="Ange författare" required>
+        </div>
+
+    </form>
+</div>
+
+<i class="fa-solid fa-arrow-right arrow"></i>
+
+<script>
+    // Show the arrow when the page loads
+    window.addEventListener('load', () => {
+        const arrow = document.querySelector('.arrow');
+        arrow.classList.add('show');
+    });
+
+    // Add click event listener to the arrow to navigate to usage.html
+    const arrow = document.querySelector('.arrow');
+    arrow.addEventListener('click', () => {
+        document.body.classList.add('slide-up');
+        setTimeout(() => {
+            window.location.href = 'usage.html';
+        }, 1000); // Match the duration of the slide-up transition
+    });
+</script>
+
+</body>
+</html>

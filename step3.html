@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximera T: Tid (livslängd)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @font-face {
+            font-family: 'CircularStd-Bold';
+            src: url('font/CircularStd-Bold.otf') format('opentype');
+        }
+
+        @font-face {
+            font-family: 'CircularStd-Book';
+            src: url('font/CircularStd-Book.otf') format('opentype');
+        }
+        @font-face {
+            font-family: 'IvarText-Regular';
+            src: url('font/IvarText-Regular.otf') format('opentype');
+        }
+        body {
+            font-family: 'CircularStd-Book', 'IvarText-Regular', Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #ebebeb;
+            -webkit-font-smoothing: antialiased; /* För Safari och Chrome */
+            -moz-osx-font-smoothing: grayscale; /* För Firefox på Mac */
+        }
+        .header {
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-size: 4em;
+            margin: 0;
+            font-family: 'CircularStd-Bold', Arial, sans-serif;
+            font-style: bold;
+        }
+
+        .header p {
+            font-size: 1.3em;
+            color: #000000;
+            font-family: 'IvarText-Regular', Arial, sans-serif;
+            max-width: 60%;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 60px;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .column {
+            flex: 1 1 250px;
+            background-color: #ebebeb;
+            padding: 20px;
+            border-radius: 0px;
+            box-shadow: none;
+            text-align: left;
+        }
+
+        .column h2 {
+            margin-bottom: 5; /* Ta bort extra radavstånd */
+            font-size: 0.9em;
+            font-family: 'CircularStd-Bold', Arial, sans-serif;
+            color: #000000;
+            letter-spacing: 0.03em;
+            font-style: bold;
+        }
+
+        .column p {
+            margin-top: 0; /* Ta bort extra radavstånd */
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            font-family: 'CircularStd-Book', Arial, sans-serif;
+            color: #000000;
+            font-style: normal;
+        }
+
+        .column .more-text {
+            display: none;
+            
+        }
+
+        .column .toggle-button {
+            cursor: pointer;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-top: 10px;
+            transition: transform 0.5s ease; /* Lägg till övergång för rotation */
+        }
+
+        .column .toggle-button svg {
+            width: 15px;
+            height: 15px;
+            transform: rotate(-45deg);
+            transition: transform 0.5s ease; /* Lägg till övergång för rotation */
+        }
+
+        .column .toggle-button:hover svg {
+            transform: rotate(45deg); /* Roterar pilen 90 grader vid hover */
+        }
+
+        .column.expanded .toggle-button svg {
+            transform: rotate(90deg); /* Roterar pilen 90 grader när expanderad */
+        }
+
+        .column.expanded .more-text {
+            display: block;
+        }
+
+        .column.expanded .toggle-button svg {
+            transform: rotate(45deg);
+        }
+
+        .column .number-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .column .number-options span {
+            display: inline-block;
+            width: 23px;
+            height: 23px;
+            line-height: 23px;
+            text-align: center;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            font-size: 0.8em; /* Minska font size */
+        }
+
+        .column .number-options span:hover {
+            background-color: rgb(0, 0, 0);
+            color: white;
+        }
+
+        .column .number-options span.selected {
+            background-color: rgb(0, 0, 0);
+            color: white;
+        }
+        .column label {
+            font-size: 0.9em; /* Ändra storlek på label */
+            margin-bottom: 10px; /* Lägg till marginal under label */
+            margin-top: 50px;
+            display: block; /* Gör label till blockelement */
+            font-family: 'CircularStd-Book', Arial, sans-serif;
+            color: #000000;
+            font-style: normal;
+        }
+        .column textarea {
+            width: calc(100% - 20px);
+            height: 100px;
+            padding: 10px;
+            border: none;
+            background: linear-gradient(to bottom, #5f5f5f 0.1px, transparent 1px) repeat-y; /* Ändra färg och tjocklek här */
+            background-size: 100% 20px; /* Justera avståndet mellan linjerna */
+            background-position: 0 5px; /* Flytta ned linjerna några pixlar */
+            margin-top: 10px;
+            font-family: 'CircularStd-Book', Arial, sans-serif;
+            font-size: 0.9em;
+            color: #000000;
+            line-height: 20px;
+            resize: none;
+            outline: none; /* Ta bort den svarta rutan */
+        }
+        
+
+        .submit-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 55px;
+}
+
+.previous-button {
+    position: fixed;
+    bottom: 80px; /* Move the button up to avoid overlap */
+    right: 20px;
+    padding: 10px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 55px;
+}
+
+        .submit-button svg {
+            margin-left: 10px;
+            width: 40px; /* Anpassa efter behov */
+            height: 40px;
+        }
+
+
+        .slide-up {
+            transform: translateY(-120%);
+            transition: transform 1s ease-in-out;
+        }
+        .slide-down {
+            transform: translateY(170%);
+            transition: transform 1s ease-in-out;
+        }
+    </style>
+</head>
+<body class="time-page">
+    <div class="header">
+        <h1>Maximera T: Tid (livslängd)</h1>
+        <p>Tid innebär att en byggd struktur ska stå och leva så länge som möjligt. Om något ska stå länge måste det vara vackert och omtyckt. En älskad byggnad eller en betydelsebärande plats som människor känner ägandeskap över och förankring till rivs inte. För att möjliggöra detta arbetar vi på flera plan med delaktighet i våra processer, robusta och tåliga material och högkvalitativ arkitektur.
+        </p>
+    </div>
+    <div class="container">
+        <div class="column">
+            <h2>RESILIENS</h2>
+            <p>Resiliens handlar om att skapa robusta strukturer och tåliga miljöer...
+                <span class="more-text">Beakta förmågan att vara motståndskraftig över tid. På vilket sätt bidrar arkitekturen för att hantera effekter av klimatförändringar i form av bl.a. höjda vattennivåer, torka, skyfall och andra typer av extremväder? Arbeta exempelvis med ekosystemtjänster som ett sätt att skapa långsiktigt hållbar och beständig arkitektur.</span>
+                </p>
+                <div class="toggle-button" onclick="toggleText(this)">
+                    <svg id="Lager_1" data-name="Lager 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6.13 6.13">
+                        <defs>
+                            <style>
+                                .cls-1 {
+                                    stroke-miterlimit: 10;
+                                }
+    
+                                .cls-1, .cls-2 {
+                                    fill: none;
+                                    stroke: #000;
+                                    stroke-linecap: round;
+                                    stroke-width: 1px;
+                                }
+    
+                                .cls-2 {
+                                    stroke-linejoin: round;
+                                }
+                            </style>
+                        </defs>
+                        <polyline class="cls-2" points=".98 5.88 5.55 5.55 5.88 .98"/>
+                        <line class="cls-1" x1="5.55" y1="5.55" x2=".25" y2=".25"/>
+                    </svg>
+                </div>
+                <label for="categoryK">På en skala från ett till fem, hur prioriterat är arbetet med Resiliens i det aktuella projektet?</label>
+                <div class="number-options" id="numberOptionsK">
+                    <span onclick="selectNumber(this, 'categoryK')">1</span>
+                    <span onclick="selectNumber(this, 'categoryK')">2</span>
+                    <span onclick="selectNumber(this, 'categoryK')">3</span>
+                    <span onclick="selectNumber(this, 'categoryK')">4</span>
+                    <span onclick="selectNumber(this, 'categoryK')">5</span>
+                </div>
+                <input type="hidden" id="categoryK" name="categoryK">
+                <label for="commentsK">Kommentarer:</label>
+                <textarea id="commentsK" name="commentsK" rows="4"></textarea>
+            </div>
+        <div class="column">
+            <h2>SKÖNHET</h2>
+            <p>Skönhet handlar om att värdera estetisk livslängd på samma sätt...
+                <span class="more-text">som teknisk livslängd. Beakta den mänskliga skalan och detaljeringen på platsen/ byggnaden. En vacker och omsorgsfullt gestaltad miljö som är älskad av många kommer inte att rivas. Använd arkitekturen för att skapa skönhet och attraktivitet för alla sinnen genom exempelvis proportionering, komposition, platsförankring, detaljering och materialval.</span>
+                </p>
+                <div class="toggle-button" onclick="toggleText(this)">
+                    <svg id="Lager_1" data-name="Lager 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6.13 6.13">
+                        <defs>
+                            <style>
+                                .cls-10 {
+                                    stroke-miterlimit: 10;
+                                }
+    
+                                .cls-10, .cls-20 {
+                                    fill: none;
+                                    stroke: #000;
+                                    stroke-linecap: round;
+                                    stroke-width: 1px;
+                                }
+    
+                                .cls-20 {
+                                    stroke-linejoin: round;
+                                }
+                            </style>
+                        </defs>
+                        <polyline class="cls-20" points=".98 5.88 5.55 5.55 5.88 .98"/>
+                        <line class="cls-10" x1="5.55" y1="5.55" x2=".25" y2=".25"/>
+                    </svg>
+                </div>
+                <label for="categoryL">På en skala från ett till fem, hur prioriterat är arbetet med Skönhet i det aktuella projektet?
+                </label>
+                <div class="number-options" id="numberOptionsL">
+                    <span onclick="selectNumber(this, 'categoryL')">1</span>
+                    <span onclick="selectNumber(this, 'categoryL')">2</span>
+                    <span onclick="selectNumber(this, 'categoryL')">3</span>
+                    <span onclick="selectNumber(this, 'categoryL')">4</span>
+                    <span onclick="selectNumber(this, 'categoryL')">5</span>
+                </div>
+                <input type="hidden" id="categoryL" name="categoryL">
+                <label for="commentsL">Kommentarer:</label>
+                <textarea id="commentsL" name="commentsL" rows="4"></textarea>
+            </div>
+        <div class="column">
+            <h2>FLEXIBILITET</h2>
+            <p>Vi lever i en föränderlig värld och behöver ta höjd...
+                <span class="more-text">för framtida behov. Beakta förmågan att kunna ändra användning över tid. Genom att bygga in flexibilitet i form av t.ex. högre takhöjd, generösa mått, anpassningsbara ytor och tekniska system kan man underlätta och möjliggöra för ändrade funktioner.</span>
+            </p>
+            <div class="toggle-button" onclick="toggleText(this)">
+                <svg id="Lager_1" data-name="Lager 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6.13 6.13">
+                    <defs>
+                        <style>
+                            .cls-100 {
+                                stroke-miterlimit: 10;
+                            }
+
+                            .cls-100, .cls-200 {
+                                fill: none;
+                                stroke: #000;
+                                stroke-linecap: round;
+                                stroke-width: 1px;
+                            }
+
+                            .cls-200 {
+                                stroke-linejoin: round;
+                            }
+                        </style>
+                    </defs>
+                    <polyline class="cls-200" points=".98 5.88 5.55 5.55 5.88 .98"/>
+                    <line class="cls-100" x1="5.55" y1="5.55" x2=".25" y2=".25"/>
+                </svg>
+            </div>
+            <label for="categoryM">På en skala från ett till fem, hur prioriterat är arbetet med Flexibilitet i det aktuella projektet?</label>
+            <div class="number-options" id="numberOptionsM">
+                <span onclick="selectNumber(this, 'categoryM')">1</span>
+                <span onclick="selectNumber(this, 'categoryM')">2</span>
+                <span onclick="selectNumber(this, 'categoryM')">3</span>
+                <span onclick="selectNumber(this, 'categoryM')">4</span>
+                <span onclick="selectNumber(this, 'categoryM')">5</span>
+            </div>
+            <input type="hidden" id="categoryM" name="categoryM">
+            <label for="commentsM">Kommentarer:</label>
+            <textarea id="commentsM" name="commentsM" rows="4"></textarea>
+        </div>
+        <div class="column">
+            <h2>ÄGANDESKAP</h2>
+            <p>Ägandeskap handlar om hur människor relaterar...
+                <span class="more-text">och tar till sig en byggnad eller plats. Beakta förmågan hos arkitekturen att främja samhörighet och historieskapande. Exempel på frågor att adressera är identitet, viljan att benämna en plats eller ett verk, berättelse, platsanpassning samt involvering av människor med ambitionen att beröra och skapa känslor.</span>
+            </p>
+            <div class="toggle-button" onclick="toggleText(this)">
+                <svg id="Lager_1" data-name="Lager 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6.13 6.13">
+                    <defs>
+                        <style>
+                            .cls-1000 {
+                                stroke-miterlimit: 10;
+                            }
+
+                            .cls-1000, .cls-2000 {
+                                fill: none;
+                                stroke: #000;
+                                stroke-linecap: round;
+                                stroke-width: 1px;
+                            }
+
+                            .cls-2000 {
+                                stroke-linejoin: round;
+                            }
+                        </style>
+                    </defs>
+                    <polyline class="cls-2000" points=".98 5.88 5.55 5.55 5.88 .98"/>
+                    <line class="cls-1000" x1="5.55" y1="5.55" x2=".25" y2=".25"/>
+                </svg>
+            </div>
+            <label for="categoryN">På en skala från ett till fem, hur prioriterat är arbetet med Ägandeskap i det aktuella projektet?</label>
+            <div class="number-options" id="numberOptionsN">
+                <span onclick="selectNumber(this, 'categoryN')">1</span>
+                <span onclick="selectNumber(this, 'categoryN')">2</span>
+                <span onclick="selectNumber(this, 'categoryN')">3</span>
+                <span onclick="selectNumber(this, 'categoryN')">4</span>
+                <span onclick="selectNumber(this, 'categoryN')">5</span>
+            </div>
+            <input type="hidden" id="categoryN" name="categoryN">
+            <label for="commentsN">Kommentarer:</label>
+            <textarea id="commentsN" name="commentsN" rows="4"></textarea>
+        </div>
+        <div class="column">
+            <h2>DEMONTERBARHET</h2>
+            <p>Välj materialval med lång teknisk livslängd. Beakta förmågan...
+                <span class="more-text">att kunna demontera och återanvända istället för att riva. Att kunna plocka isär och återanvända det vi bygger idag möjliggör en cirkulär i framtiden. Det berör bl.a. frågor som design, materialval, separerbarhet, spårning och märkning, infästningsteknik och utförandeprocess.</span>
+            </p>
+            <div class="toggle-button" onclick="toggleText(this)">
+                <svg id="Lager_1" data-name="Lager 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6.13 6.13">
+                    <defs>
+                        <style>
+                            .cls-10000 {
+                                stroke-miterlimit: 10;
+                            }
+
+                            .cls-10000, .cls-20000 {
+                                fill: none;
+                                stroke: #000;
+                                stroke-linecap: round;
+                                stroke-width: 1px;
+                            }
+
+                            .cls-20000 {
+                                stroke-linejoin: round;
+                            }
+                        </style>
+                    </defs>
+                    <polyline class="cls-20000" points=".98 5.88 5.55 5.55 5.88 .98"/>
+                    <line class="cls-10000" x1="5.55" y1="5.55" x2=".25" y2=".25"/>
+                </svg>
+            </div>
+            <label for="categoryO">På en skala från ett till fem, hur prioriterat är arbetet med Demonterbarhet i det aktuella projektet?</label>
+            <div class="number-options" id="numberOptionsO">
+                <span onclick="selectNumber(this, 'categoryO')">1</span>
+                <span onclick="selectNumber(this, 'categoryO')">2</span>
+                <span onclick="selectNumber(this, 'categoryO')">3</span>
+                <span onclick="selectNumber(this, 'categoryO')">4</span>
+                <span onclick="selectNumber(this, 'categoryO')">5</span>
+            </div>
+            <input type="hidden" id="categoryO" name="categoryO">
+            <label for="commentsO">Kommentarer:</label>
+            <textarea id="commentsO" name="commentsO" rows="4"></textarea>
+        </div>
+    </div>
+
+    <script>
+        function toggleText(button) {
+            const column = button.closest('.column');
+            column.classList.toggle('expanded');
+        }
+
+        function selectNumber(element, categoryId) {
+        const numberOptions = element.parentElement.querySelectorAll('span');
+        numberOptions.forEach(option => option.classList.remove('selected'));
+        element.classList.add('selected');
+        document.getElementById(categoryId).value = element.textContent;
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ART</title>
+  <style>
+    body { font-family: sans-serif; margin: 2rem; 
+      background-color: #ebebeb;
+    }
+    #form-wrapper {
+      position: relative;
+      min-height: 1000px; /* Set a minimum height */
+      overflow: hidden;
+    }
+    #form-container {
+      position: relative;
+      min-height: 100%; /* Ensure it adjusts to content */
+    }
+    .form-page {
+      position: absolute;
+      width: 100%;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      top: 0;
+      left: 0;
+      opacity: 1; /* Ensure both pages are visible during transition */
+      pointer-events: none;
+    }
+    .form-page.active {
+      pointer-events: auto;
+      position: relative;
+      height: auto; /* Allow the page to expand based on content */
+    }
+    .slide-up-in {
+      transform: translateY(100%);
+      animation: slideUpIn 0.5s forwards;
+    }
+    .slide-up-out {
+      animation: slideUpOut 0.5s forwards;
+    }
+    .slide-down-in {
+      transform: translateY(-100%);
+      animation: slideDownIn 0.5s forwards;
+    }
+    .slide-down-out {
+      animation: slideDownOut 0.5s forwards;
+    }
+    @keyframes slideUpIn {
+      to { transform: translateY(0); }
+    }
+    @keyframes slideUpOut {
+      to { transform: translateY(-100%); opacity: 0; }
+    }
+    @keyframes slideDownIn {
+      to { transform: translateY(0); }
+    }
+    @keyframes slideDownOut {
+      to { transform: translateY(100%); opacity: 0; }
+    }
+
+    nav {
+      position: fixed; /* Fix the position on the screen */
+      bottom: 20px; /* Position it near the bottom of the screen */
+      left: 50%; /* Center it horizontally */
+      transform: translateX(-50%); /* Adjust for centering */
+      z-index: 1000; /* Ensure it stays in the foreground */
+      background-color: rgba(255, 255, 255, 0.9); /* Add a semi-transparent background */
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    }
+
+    nav button {
+      margin: 0 5px; /* Add spacing between buttons */
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="./script.js" type="module"></script> <!-- Include the external JS file -->
+</head>
+<body>
+  <div id="form-wrapper">
+    <div id="form-container"></div>
+  </div>
+
+  <div id="doughnutChart" style="position: fixed; top: 20px; right: 20px; width: 200px; height: 200px;"></div>
+
+  <div id="roseChart" style="width: 100%; height: 400px; margin-top: 20px;"></div>
+
+  <nav>
+    <button onclick="prevPage()">Previous</button>
+    <button onclick="nextPage()">Next</button>
+    <button id="exportBtn" style="display: none;" onclick="exportPDF()">Export as PDF</button>
+    <button onclick="resetForm()">Reset</button> <!-- Add reset button -->
+  </nav>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Lager_3" data-name="Lager 3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 31.29 31.29">
+  <defs>
+    <style>
+      .cls-1 {
+        stroke-linejoin: round;
+      }
+
+      .cls-1, .cls-2 {
+        fill: none;
+        stroke: #000;
+        stroke-linecap: round;
+        stroke-width: 1.29px;
+      }
+
+      .cls-2 {
+        stroke-miterlimit: 10;
+      }
+    </style>
+  </defs>
+  <circle class="cls-1" cx="15.65" cy="15.65" r="15"/>
+  <g>
+    <polyline class="cls-1" points="6.7 17.58 15.65 25.33 24.59 17.58"/>
+    <line class="cls-2" x1="15.65" y1="25.33" x2="15.65" y2="5.96"/>
+  </g>
+</svg>

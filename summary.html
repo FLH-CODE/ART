@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> <!-- Add jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script> <!-- Add html2canvas -->
+    <script src="./script.js" type="module" defer></script>
+    <style>
+        @font-face {
+            font-family: 'CircularStd-Bold';
+            src: url('font/CircularStd-Bold.otf') format('opentype');
+        }
+
+        @font-face {
+            font-family: 'CircularStd-Book';
+            src: url('font/CircularStd-Book.otf') format('opentype');
+        }
+        @font-face {
+            font-family: 'IvarText-Regular';
+            src: url('font/IvarText-Regular.otf') format('opentype');
+        }
+        body {
+            font-family: 'CircularStd-Book', 'IvarText-Regular', Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #ebebeb;
+            -webkit-font-smoothing: antialiased; /* För Safari och Chrome */
+            -moz-osx-font-smoothing: grayscale; /* För Firefox på Mac */
+        }
+        .header {
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-size: 4em;
+            margin: 0;
+            font-family: 'CircularStd-Bold', Arial, sans-serif;
+            font-style: bold;
+        }
+
+        .header p {
+            font-size: 1.3em;
+            color: #000000;
+            font-family: 'IvarText-Regular', Arial, sans-serif;
+            max-width: 60%;
+        }
+
+        .top-categories {
+        float: left;
+        width: 15%;
+        padding: 20px;
+        margin-left: 0px; /* Restore left margin for proper spacing */
+        margin-top: 20px; /* Restore top margin */
+        }
+
+        .top-categories h2 {
+            text-align: left;
+            margin-bottom: 10px;
+            font-family: 'IvarText-Regular', sans-serif; /* Use IvarText-Regular font */
+            font-weight: normal;
+            font-size: 1em;
+            max-width: 100%; /* Ensure the heading is responsive */
+            word-wrap: break-word; /* Break the line if it's too long */
+        }
+
+        .top-categories ul {
+            list-style-type: disc;
+            padding: 20px;
+        }
+
+        .chart-container {
+            position: fixed; /* Make it fixed to the viewport */
+            top: 0;
+            left: 0;
+            width: 100vw; /* Fill the entire screen width */
+            height: 100vh; /* Fill the entire screen height */
+            z-index: -1; /* Place it in the background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ebebeb; /* Add a background color for better visibility */
+        }
+        #roseChart {
+            width: 90%; /* Ensure the chart takes most of the container width */
+            height: 90%; /* Ensure the chart takes most of the container height */
+        }
+        #labels-container {
+            position: absolute;
+            height: 200%;
+            aspect-ratio: 1;
+            pointer-events: none;
+        }
+
+        .category-label {
+            position: absolute;
+            transform-origin: center;
+            font-size: 0.6em;
+            color: #4a4a4a;
+            font-family: 'CircularStd-Book', sans-serif;
+            white-space: nowrap;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="summary-page">
+  
+    <div class="header">
+        <h1>ART-Bestämning</h1>
+        <h2>Projektnamn</h2>
+    </div>
+    <div class="top-categories">
+        <h2>Vi behöver prioritera arbetet med:</h2>
+        <ul id="topCategoriesList"></ul>
+        <h2>Visst fokus kommer även behöva läggas läggas på:</h2>
+        <ul id="additionalCategoriesList"></ul>
+    </div>
+    <div class="chart-container">
+        <div id="roseChart"></div>
+        <div id="labels-container"></div> <!-- Här placeras kategorinamnen -->
+    </div>
+</body>
+</html>
