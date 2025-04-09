@@ -1126,19 +1126,7 @@ function positionLabelsForPDF(container, width, height) {
 
 // Clear formData on page load
 window.onload = () => {
-    localStorage.removeItem('formData'); // Clear saved form data
-    formData = {}; // Reset the formData object
-    
-    // Clear any existing chart instances
-    const chartContainer = document.getElementById('doughnutChart');
-    if (chartContainer) {
-        const chart = echarts.getInstanceByDom(chartContainer);
-        if (chart) {
-            chart.dispose(); // Properly dispose of the chart
-        }
-    }
-    
-    console.log('Form data cleared on page load.');
+    clearAllData();
     loadPage(0); // Load the first page
 };
 
@@ -1150,6 +1138,33 @@ window.exportPDF = exportPDF;
 
 // Warn the user before leaving the page
 window.addEventListener('beforeunload', (event) => {
+    clearAllData();
     event.preventDefault();
     event.returnValue = 'Are you sure you want to leave? Your data will be lost.';
 });
+
+function clearAllData() {
+    // Clear the combined formData object
+    localStorage.removeItem('formData');
+    
+    // Clear individual category items (A-O)
+    for (let i = 65; i <= 79; i++) {
+        const categoryKey = 'category' + String.fromCharCode(i);
+        localStorage.removeItem(categoryKey);
+    }
+    
+    // Clear progress data
+    localStorage.removeItem('progress');
+    
+    // Clear project info fields
+    const fieldIds = ['datum', 'projekt', 'affarsomrade', 'plats', 'skede', 
+                      'bestallare', 'team', 'forfattare'];
+    fieldIds.forEach(fieldId => {
+        localStorage.removeItem(fieldId);
+    });
+    
+    // Reset the in-memory formData object
+    formData = {};
+    
+    console.log('All form data cleared completely.');
+}
