@@ -104,6 +104,21 @@
             white-space: nowrap;
             text-align: center;
         }
+        
+        /* Add styling for the textbox */
+        .action-textbox {
+            width: 100%;
+            min-height: 150px;
+            margin-top: 10px;
+            padding: 10px;
+            font-family: 'CircularStd-Book', Arial, sans-serif;
+            font-size: 0.9em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            resize: vertical;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body class="summary-page">
@@ -117,6 +132,8 @@
         <ul id="topCategoriesList"></ul>
         <h2>Visst fokus kommer även behöva läggas läggas på:</h2>
         <ul id="additionalCategoriesList"></ul>
+        <h2>Vad behöver vi göra för att arbeta med prioriterade ämnen?:</h2>
+        <textarea id="actionPlan" name="actionPlan" class="action-textbox" placeholder="Skriv era åtgärder här..."></textarea>
     </div>
     <div class="chart-container">
         <div id="roseChart"></div>

@@ -151,7 +151,19 @@ function updateSummaryChart() {
     
     myChart.clear();
 
-    
+    // Add support for action plan textarea
+    const actionPlan = document.getElementById('actionPlan');
+    if (actionPlan) {
+        // Load saved data
+        actionPlan.value = formData['actionPlan'] || localStorage.getItem('actionPlan') || '';
+        
+        // Set up event listener to save data
+        actionPlan.addEventListener('input', function() {
+            formData['actionPlan'] = this.value;
+            localStorage.setItem('actionPlan', this.value);
+            saveInputs();
+        });
+    }
 
     const categories = [
         { name: 'NYTTJANDE', value: parseFloat(formData['categoryA'] || localStorage.getItem('categoryA') || 0) },
@@ -544,6 +556,12 @@ function restoreInputs(container = document) {
     const categoryKey = 'category' + String.fromCharCode(i);
     formData[categoryKey] = formData[categoryKey] || localStorage.getItem(categoryKey) || '0';
   }
+  
+  // Handle actionPlan specifically
+  const actionPlan = container.querySelector('#actionPlan');
+  if (actionPlan) {
+    actionPlan.value = formData['actionPlan'] || localStorage.getItem('actionPlan') || '';
+  }
 
   container.querySelectorAll('input, textarea').forEach(input => {
       if (formData[input.name]) {
@@ -608,11 +626,27 @@ function resetForm() {
         // Clear progress data
         localStorage.removeItem('progress');
         
+        // Clear project info fields
+        const fieldIds = ['datum', 'projekt', 'affarsomrade', 'plats', 'skede', 
+                          'bestallare', 'team', 'forfattare'];
+        fieldIds.forEach(fieldId => {
+            localStorage.removeItem(fieldId);
+        });
+        
+        // Clear action plan
+        localStorage.removeItem('actionPlan');
+        
         // Reset the in-memory formData object
         formData = {};
         
         // Clear any existing chart and reset to 0%
         updateProgressChart(document, true);
+        
+        // Clear actionPlan textarea if it exists in the current page
+        const actionPlanElement = document.getElementById('actionPlan');
+        if (actionPlanElement) {
+            actionPlanElement.value = '';
+        }
         
         console.log('Form data reset completely.');
         loadPage(0); // Reload the first page
@@ -704,6 +738,17 @@ async function exportPDF() {
         alert('PDF library not loaded. Please try again later.');
         return;
     }
+
+    // Backup the current form and progress data before PDF export
+    const formDataBackup = JSON.parse(localStorage.getItem('formData')) || {};
+    const progressBackup = JSON.parse(localStorage.getItem('progress')) || {};
+    const categoryBackup = {};
+    for (let i = 65; i <= 79; i++) {
+        const categoryKey = 'category' + String.fromCharCode(i);
+        categoryBackup[categoryKey] = localStorage.getItem(categoryKey);
+    }
+    // Backup action plan separately
+    const actionPlanBackup = localStorage.getItem('actionPlan');
 
     // Create a style element to disable all animations and hide content during export
     const noAnimationsStyle = document.createElement('style');
@@ -1005,6 +1050,21 @@ async function exportPDF() {
         console.error('Error generating PDF:', error);
         alert('Error generating PDF: ' + error.message);
     } finally {
+        // Restore the original form and progress data after PDF export
+        localStorage.setItem('formData', JSON.stringify(formDataBackup));
+        localStorage.setItem('progress', JSON.stringify(progressBackup));
+        for (let i = 65; i <= 79; i++) {
+            const categoryKey = 'category' + String.fromCharCode(i);
+            if (categoryBackup[categoryKey] !== null) {
+                localStorage.setItem(categoryKey, categoryBackup[categoryKey]);
+            }
+        }
+        // Restore action plan
+        if (actionPlanBackup !== null) {
+            localStorage.setItem('actionPlan', actionPlanBackup);
+        }
+        formData = {...formDataBackup};  // Restore the in-memory formData
+
         if (document.body.contains(renderContainer)) {
             document.body.removeChild(renderContainer);
         }
@@ -1021,6 +1081,10 @@ async function exportPDF() {
 
         if (currentPage !== currentPageBackup) {
             loadPage(currentPageBackup);
+            // Force a refresh of the chart with the correct data
+            setTimeout(() => {
+                updateChart();
+            }, 500);
         }
     }
 }
@@ -1162,6 +1226,9 @@ function clearAllData() {
     fieldIds.forEach(fieldId => {
         localStorage.removeItem(fieldId);
     });
+    
+    // Clear action plan
+    localStorage.removeItem('actionPlan');
     
     // Reset the in-memory formData object
     formData = {};
