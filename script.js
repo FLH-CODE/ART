@@ -728,118 +728,139 @@ async function exportPDF() {
     document.body.appendChild(renderContainer);
 
     try {
-        for (let i = 0; i < pages.length; i++) {
-            loadingDiv.innerHTML = `Rendering page ${i + 1} of ${pages.length}...`;
+        // Use a modified array of pages for the PDF export
+        const pdfPages = ['project_info_print.html', 'vision.html', 'step1.html', 'step2.html', 'step3.html', './summary.html'];
+        
+        for (let i = 0; i < pdfPages.length; i++) {
+            loadingDiv.innerHTML = `Rendering page ${i + 1} of ${pdfPages.length}...`;
 
-            const oldTransitioning = isTransitioning;
-            isTransitioning = false;
-            await loadPage(i);
-            isTransitioning = oldTransitioning;
-
-            if (i < pages.length - 1) {
-                document.querySelectorAll('.toggle-button').forEach(button => {
-                    button.style.display = 'none';
-                });
-
-                document.querySelectorAll('.column').forEach(column => {
-                    column.classList.add('expanded');
-                });
-            }
-
-            if (i === pages.length - 1) {
-                const roseChart = document.getElementById('roseChart');
-                if (roseChart) {
-                    updateSummaryChart();
-                    await new Promise(resolve => setTimeout(resolve, 2000));
+            // For the first page (project info), load the print-specific version
+            if (i === 0) {
+                try {
+                    const res = await fetch(pdfPages[i]);
+                    if (!res.ok) throw new Error(`Failed to load ${pdfPages[i]}`);
+                    const html = await res.text();
+                    
+                    // Create a temporary element to hold the project info print content
+                    renderContainer.innerHTML = html;
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                } catch (error) {
+                    console.error(`Error loading ${pdfPages[i]}:`, error);
+                    // If loading fails, create a simple page with error message
+                    renderContainer.innerHTML = '<div class="header"><h1>Project Information</h1></div><p>Error loading project information page.</p>';
                 }
             } else {
-                const doughnutChart = document.getElementById('doughnutChart');
-                if (doughnutChart) {
-                    updateChart();
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                }
-            }
+                // For other pages, use the normal page loading mechanism
+                const oldTransitioning = isTransitioning;
+                isTransitioning = false;
+                await loadPage(i);
+                isTransitioning = oldTransitioning;
 
-            renderContainer.innerHTML = '';
+                if (i < pdfPages.length - 1) {
+                    document.querySelectorAll('.toggle-button').forEach(button => {
+                        button.style.display = 'none';
+                    });
 
-            let contentToClone;
-            if (i === pages.length - 1) {
-                contentToClone = document.querySelector('.header');
-                if (contentToClone) {
-                    renderContainer.appendChild(contentToClone.cloneNode(true));
-                }
-
-                const topCategories = document.querySelector('.top-categories');
-                if (topCategories) {
-                    renderContainer.appendChild(topCategories.cloneNode(true));
+                    document.querySelectorAll('.column').forEach(column => {
+                        column.classList.add('expanded');
+                    });
                 }
 
-                const chartWrapper = document.createElement('div');
-                chartWrapper.style.position = 'absolute';
-                chartWrapper.style.width = '2000px';
-                chartWrapper.style.height = '1050px'; //x
-                chartWrapper.style.margin = '20px auto';
-                chartWrapper.style.top = '0';
-                renderContainer.appendChild(chartWrapper);
-
-                const chartContainer = document.createElement('div');
-                chartContainer.style.position = 'absolute';
-                chartContainer.style.top = '0';
-                chartContainer.style.left = '0';
-                chartContainer.style.width = '100%';
-                chartContainer.style.height = '100%';
-
-                const originalChart = document.getElementById('roseChart');
-                if (originalChart) {
-                    const canvas = originalChart.querySelector('canvas');
-                    if (canvas) {
-                        const canvasClone = document.createElement('canvas');
-                        canvasClone.width = canvas.width;
-                        canvasClone.height = canvas.height;
-                        canvasClone.style.width = '100%';
-                        canvasClone.style.height = '100%';
-                        canvasClone.getContext('2d').drawImage(canvas, 0, 0);
-                        chartContainer.appendChild(canvasClone);
+                if (i === pdfPages.length - 1) {
+                    const roseChart = document.getElementById('roseChart');
+                    if (roseChart) {
+                        updateSummaryChart();
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                    }
+                } else {
+                    const doughnutChart = document.getElementById('doughnutChart');
+                    if (doughnutChart) {
+                        updateChart();
+                        await new Promise(resolve => setTimeout(resolve, 500));
                     }
                 }
 
-                chartWrapper.appendChild(chartContainer);
+                renderContainer.innerHTML = '';
 
-                const labelsContainer = document.getElementById('labels-container');
-                if (labelsContainer) {
-                    const labelsClone = document.createElement('div');
-                    labelsClone.id = 'pdf-labels-container';
-                    labelsClone.style.position = 'absolute';
-                    labelsClone.style.top = '0';
-                    labelsClone.style.left = '0';
-                    labelsClone.style.width = '100%';
-                    labelsClone.style.height = '100%';
-                    labelsClone.style.zIndex = '10';
-                    chartWrapper.appendChild(labelsClone);
+                let contentToClone;
+                if (i === pdfPages.length - 1) {
+                    contentToClone = document.querySelector('.header');
+                    if (contentToClone) {
+                        renderContainer.appendChild(contentToClone.cloneNode(true));
+                    }
 
-                    positionLabelsForPDF(labelsClone, chartWrapper.clientWidth, chartWrapper.clientHeight);
-                }
-            } else {
-                const header = document.querySelector('.header');
-                if (header) {
-                    renderContainer.appendChild(header.cloneNode(true));
-                }
+                    const topCategories = document.querySelector('.top-categories');
+                    if (topCategories) {
+                        renderContainer.appendChild(topCategories.cloneNode(true));
+                    }
 
-                const container = document.querySelector('.container');
-                if (container) {
-                    const containerClone = container.cloneNode(true);
-                    containerClone.querySelectorAll('button, [onclick], .toggle-button').forEach(el => {
-                        if (el.classList.contains('toggle-button')) {
-                            el.style.cursor = 'default';
-                            el.removeAttribute('onclick');
-                        } else if (el.closest('.number-options')) {
-                            el.removeAttribute('onclick');
-                            el.style.cursor = 'default';
-                        } else {
-                            el.parentNode.removeChild(el);
+                    const chartWrapper = document.createElement('div');
+                    chartWrapper.style.position = 'absolute';
+                    chartWrapper.style.width = '2000px';
+                    chartWrapper.style.height = '1050px'; //x
+                    chartWrapper.style.margin = '20px auto';
+                    chartWrapper.style.top = '0';
+                    renderContainer.appendChild(chartWrapper);
+
+                    const chartContainer = document.createElement('div');
+                    chartContainer.style.position = 'absolute';
+                    chartContainer.style.top = '0';
+                    chartContainer.style.left = '0';
+                    chartContainer.style.width = '100%';
+                    chartContainer.style.height = '100%';
+
+                    const originalChart = document.getElementById('roseChart');
+                    if (originalChart) {
+                        const canvas = originalChart.querySelector('canvas');
+                        if (canvas) {
+                            const canvasClone = document.createElement('canvas');
+                            canvasClone.width = canvas.width;
+                            canvasClone.height = canvas.height;
+                            canvasClone.style.width = '100%';
+                            canvasClone.style.height = '100%';
+                            canvasClone.getContext('2d').drawImage(canvas, 0, 0);
+                            chartContainer.appendChild(canvasClone);
                         }
-                    });
-                    renderContainer.appendChild(containerClone);
+                    }
+
+                    chartWrapper.appendChild(chartContainer);
+
+                    const labelsContainer = document.getElementById('labels-container');
+                    if (labelsContainer) {
+                        const labelsClone = document.createElement('div');
+                        labelsClone.id = 'pdf-labels-container';
+                        labelsClone.style.position = 'absolute';
+                        labelsClone.style.top = '0';
+                        labelsClone.style.left = '0';
+                        labelsClone.style.width = '100%';
+                        labelsClone.style.height = '100%';
+                        labelsClone.style.zIndex = '10';
+                        chartWrapper.appendChild(labelsClone);
+
+                        positionLabelsForPDF(labelsClone, chartWrapper.clientWidth, chartWrapper.clientHeight);
+                    }
+                } else if (i > 0) { // Skip this for the first page as we handle it separately
+                    const header = document.querySelector('.header');
+                    if (header) {
+                        renderContainer.appendChild(header.cloneNode(true));
+                    }
+
+                    const container = document.querySelector('.container');
+                    if (container) {
+                        const containerClone = container.cloneNode(true);
+                        containerClone.querySelectorAll('button, [onclick], .toggle-button').forEach(el => {
+                            if (el.classList.contains('toggle-button')) {
+                                el.style.cursor = 'default';
+                                el.removeAttribute('onclick');
+                            } else if (el.closest('.number-options')) {
+                                el.removeAttribute('onclick');
+                                el.style.cursor = 'default';
+                            } else {
+                                el.parentNode.removeChild(el);
+                            }
+                        });
+                        renderContainer.appendChild(containerClone);
+                    }
                 }
             }
 
@@ -848,7 +869,6 @@ async function exportPDF() {
                 useCORS: true,
                 logging: false,
                 allowTaint: true,
-                //backgroundColor: "#ebebeb",
                 imageTimeout: 0
             });
 

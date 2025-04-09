@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hållbarhetsvision</title>
+    
+    <style>
+        @font-face {
+            font-family: 'CircularStd-Bold';
+            src: url('font/CircularStd-Bold.otf') format('opentype');
+        }
+        @font-face {
+            font-family: 'CircularStd-Book';
+            src: url('font/CircularStd-Book.otf') format('opentype');
+        }
+        @font-face {
+            font-family: 'IvarText-Regular';
+            src: url('font/IvarText-Regular.otf') format('opentype');
+        }
+
+        body {
+            font-family: 'CircularStd-Book', 'IvarText-Regular', Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #ebebeb;
+            -webkit-font-smoothing: antialiased; /* För Safari och Chrome */
+            -moz-osx-font-smoothing: grayscale; /* För Firefox på Mac */
+        }
+
+        .slide-up {
+            transform: translateY(-100%); /* Slide the page up */
+        }
+
+        .header {
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-size: 4em;
+            margin: 0;
+            font-family: 'CircularStd-Bold', Arial, sans-serif;
+            font-style: bold;
+        }
+
+        .header h2 {
+            font-size: 2em;
+            margin: 0;
+            font-family: 'CircularStd-Bold', Arial, sans-serif;
+            font-style: bold;
+        }
+
+        .content {
+            display: flex;    
+            width: 100%;
+            max-width: 100em;
+            min-width: 50em;
+            flex-shrink: 0; /* Prevent shrinking during transitions */
+        }
+
+        .flexColumn {
+            margin-right: 40px;
+        }
+
+        .flexColumn p {
+            font-size: 1.3em;
+            color: #000000;
+            font-family: 'IvarText-Regular', Arial, sans-serif;
+        }
+
+    </style>
+</head>
+<body class="usage-page">
+            <div class="header">
+                <h2>Om Projektet</h2>
+                <h1>Projektnamn</h1>
+
+                <div class="content">
+                    <div class="flexColumn">
+                        <p>Fritext</p>
+                    </div>
+                    <div class="flexColumn">
+                        <p>Fritext</p>
+                    </div>
+            </div>
+            </div>
+
+</body>
+</html>
