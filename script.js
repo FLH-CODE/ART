@@ -850,6 +850,22 @@ async function exportPDF() {
                     // If loading fails, create a simple page with error message
                     renderContainer.innerHTML = '<div class="header"><h1>Project Information</h1></div><p>Error loading project information page.</p>';
                 }
+            } else if (i === 1) { // Vision page
+                // Handle special case for vision page
+                try {
+                    const res = await fetch(pdfPages[i]);
+                    if (!res.ok) throw new Error(`Failed to load ${pdfPages[i]}`);
+                    const html = await res.text();
+                    
+                    // Create a temporary element to hold the vision page content
+                    renderContainer.innerHTML = html;
+
+                    // Just give extra time for rendering
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                } catch (error) {
+                    console.error(`Error preparing vision page for PDF:`, error);
+                }
             } else {
                 // For other pages, use the normal page loading mechanism
                 const oldTransitioning = isTransitioning;

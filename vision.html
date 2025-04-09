@@ -34,6 +34,7 @@
 
         .header {
             padding: 20px;
+            position: relative;  /* For absolute positioning of child elements */
         }
 
         .header h1 {
@@ -51,6 +52,8 @@
         }
 
         .content {
+            position: relative;
+            top: 200px;
             display: flex;    
             width: 100%;
             max-width: 100em;
@@ -68,11 +71,28 @@
             font-family: 'IvarText-Regular', Arial, sans-serif;
         }
 
+        .art-logo {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            width: 80px;
+            height: auto;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
     </style>
 </head>
 <body class="usage-page">
             <div class="header">
-                <h2>HÅLLBARHETSVISION</h2> 
+                <div class="header-title">
+                    <h2>HÅLLBARHETSVISION</h2>
+                    <img src="Symbols/ART.svg" alt="ART Logo" class="art-logo">
+                </div>
                 <h1>ART</h1>
 
                 <div class="content">
