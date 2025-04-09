@@ -32,9 +32,14 @@ function selectNumber(element, categoryId) {
     if (input) {
         input.value = element.textContent;
         formData[categoryId] = element.textContent; // Update formData with the selected value
+        
+        // Also update the localStorage directly to ensure consistency
+        localStorage.setItem(categoryId, element.textContent);
     }
-    updateChart(); // Dynamically update the chart
-    saveInputs(); // Save inputs whenever a number-option value is changed
+    
+    // Always update chart after value changes
+    updateChart();
+    saveInputs();
 }
 
 // Make selectNumber globally accessible
@@ -424,8 +429,8 @@ function positionLabels(labelsContainer, categories) {
 }
 
 function updateChart(container = document) {
-    // Don't show progress chart on summary page
-    if (currentPage === pages.length - 1) {
+    // Don't show progress chart on certain pages
+    if (currentPage === 0 || currentPage === 1 || currentPage === pages.length - 1) {
         const existingChart = document.getElementById('doughnutChart');
         if (existingChart) {
             existingChart.style.display = 'none';
@@ -449,10 +454,18 @@ function updateChart(container = document) {
         container.appendChild(chartContainer); // Append it to the provided container
     }
 
+    // Get existing chart instance or create new one
+    let chart = echarts.getInstanceByDom(chartContainer);
+    if (!chart) {
+        chart = echarts.init(chartContainer);
+    }
+
     const totalCategories = 15; // Total number of categories across all pages
+    
+    // Parse stored progress or initialize empty object
     const storedProgress = JSON.parse(localStorage.getItem('progress')) || { page1: 0, page2: 0, page3: 0 };
 
-    // Recalculate progress for the current page
+    // Recalculate progress for the current page based on selected values
     const currentPageKey = `page${currentPage + 1}`;
     const currentPageInputs = container.querySelectorAll('.number-options span.selected');
     storedProgress[currentPageKey] = currentPageInputs.length;
@@ -462,10 +475,8 @@ function updateChart(container = document) {
 
     // Calculate total filled categories across all pages
     const totalFilled = Object.values(storedProgress).reduce((sum, value) => sum + value, 0);
-
     const percentage = Math.round((totalFilled / totalCategories) * 100);
 
-    const chart = echarts.init(chartContainer);
     const option = {
         series: [
             {
@@ -500,7 +511,14 @@ function updateChart(container = document) {
         ]
     };
 
-    chart.setOption(option);
+    chart.setOption(option, true);
+    
+    // Make sure chart resizes with window
+    window.addEventListener('resize', () => {
+        if (chart && !chart.isDisposed()) {
+            chart.resize();
+        }
+    });
 }
 
 function restoreInputs(container = document) {
@@ -543,19 +561,22 @@ function restoreInputs(container = document) {
 }
 
 function saveInputs() {
-  document.querySelectorAll('#form-container input, #form-container textarea').forEach(input => {
-    formData[input.name] = input.value;
-  });
+    document.querySelectorAll('#form-container input, #form-container textarea').forEach(input => {
+        formData[input.name] = input.value;
+    });
 
-  document.querySelectorAll('#form-container .number-options').forEach(optionGroup => {
-    const selected = optionGroup.querySelector('.selected');
-    if (selected) {
-        formData[optionGroup.id] = selected.textContent;
-    }
-  });
+    document.querySelectorAll('#form-container .number-options').forEach(optionGroup => {
+        const selected = optionGroup.querySelector('.selected');
+        if (selected) {
+            const categoryId = optionGroup.id.replace('numberOptions', 'category');
+            formData[categoryId] = selected.textContent;
+        }
+    });
 
-  localStorage.setItem('formData', JSON.stringify(formData)); // Save formData to localStorage
-  updateChart(); // Update the chart whenever inputs are saved
+    localStorage.setItem('formData', JSON.stringify(formData)); // Save formData to localStorage
+    
+    // Always update the chart whenever inputs are saved
+    updateChart();
 }
 
 function resetForm() {
@@ -574,6 +595,49 @@ function resetForm() {
         
         // Reset the in-memory formData object
         formData = {};
+        
+        // Clear any existing chart
+        const chartContainer = document.getElementById('doughnutChart');
+        if (chartContainer) {
+            const chart = echarts.getInstanceByDom(chartContainer);
+            if (chart) {
+                chart.clear();
+                // Reset to empty state (0%)
+                chart.setOption({
+                    series: [
+                        {
+                            name: 'Background',
+                            type: 'pie',
+                            radius: ['50%', '70%'],
+                            avoidLabelOverlap: false,
+                            label: { show: false },
+                            labelLine: { show: false },
+                            data: [
+                                { value: 15, name: 'Background', itemStyle: { color: '#d3d3d3' } }
+                            ]
+                        },
+                        {
+                            name: 'Progress',
+                            type: 'pie',
+                            radius: ['50%', '70%'],
+                            avoidLabelOverlap: false,
+                            label: {
+                                show: true,
+                                position: 'center',
+                                formatter: `0%`,
+                                fontSize: 20,
+                                fontWeight: 'bold'
+                            },
+                            labelLine: { show: false },
+                            data: [
+                                { value: 0, name: 'Filled', itemStyle: { color: '#000000' } },
+                                { value: 15, name: 'Empty', itemStyle: { color: 'transparent' } }
+                            ]
+                        }
+                    ]
+                }, true);
+            }
+        }
         
         console.log('Form data reset completely.');
         loadPage(0); // Reload the first page
@@ -878,6 +942,15 @@ async function exportPDF() {
                         });
                         renderContainer.appendChild(containerClone);
                     }
+
+                    // Only add doughnut chart for steps 1-3 (pages 2-4)
+                    if (i >= 2 && i <= 4) {
+                        const doughnutChart = document.getElementById('doughnutChart');
+                        if (doughnutChart) {
+                            updateChart();
+                            await new Promise(resolve => setTimeout(resolve, 500));
+                        }
+                    }
                 }
             }
 
@@ -1080,8 +1153,17 @@ function positionLabelsForPDF(container, width, height) {
 window.onload = () => {
     localStorage.removeItem('formData'); // Clear saved form data
     formData = {}; // Reset the formData object
+    
+    // Clear any existing chart instances
+    const chartContainer = document.getElementById('doughnutChart');
+    if (chartContainer) {
+        const chart = echarts.getInstanceByDom(chartContainer);
+        if (chart) {
+            chart.dispose(); // Properly dispose of the chart
+        }
+    }
+    
     console.log('Form data cleared on page load.');
-    updateChart();
     loadPage(0); // Load the first page
 };
 
