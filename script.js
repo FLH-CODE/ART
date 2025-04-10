@@ -763,6 +763,10 @@ async function exportPDF() {
         body > *:not(#loadingDiv):not(#pdf-render-container) {
             visibility: hidden !important;
         }
+                /* Hide ART logo during PDF export */
+    .art-logo {
+        display: none !important;
+    }
     `;
     document.head.appendChild(noAnimationsStyle);
 
@@ -805,8 +809,9 @@ async function exportPDF() {
     renderContainer.style.position = 'absolute';
     renderContainer.style.top = '-9999px';
     renderContainer.style.left = '-9999px';
-    renderContainer.style.width = '2000px';
-    renderContainer.style.height = '1000px';
+    const multiplier = 1; // Define a multiplier variable
+    renderContainer.style.width = `${2000 * multiplier}px`;
+    renderContainer.style.height = `${1000 * multiplier}px`;
     renderContainer.style.overflow = 'hidden';
     renderContainer.style.backgroundColor = '#ebebeb';//canvas background color
     document.body.appendChild(renderContainer);
@@ -991,7 +996,7 @@ async function exportPDF() {
             }
 
             const canvas = await html2canvas(renderContainer, {
-                scale: 2.0,
+                scale: 2.0, // Adjust scale for better quality
                 useCORS: true,
                 logging: false,
                 allowTaint: true,
@@ -1208,6 +1213,7 @@ function positionLabelsForPDF(container, width, height) {
 window.onload = () => {
     clearAllData();
     loadPage(0); // Load the first page
+
 };
 
 // Attach functions to the global window object to ensure they are accessible from the HTML

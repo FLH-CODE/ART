@@ -12,18 +12,13 @@
             src: url('font/CircularStd-Bold.otf') format('opentype');
         }
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
+        body {
+            margin: 20px;
+            padding: 20px;
             font-family: 'CircularStd-Bold', sans-serif;
             background-color: #ebebeb; /* Set background color to match the other pages */
-            transition: transform 1s ease-in-out; /* Add transition for page slide up */
-        }
-
-        .slide-up {
-            transform: translateY(-100%); /* Slide the page up */
+            -webkit-font-smoothing: antialiased; /* För Safari och Chrome */
+            -moz-osx-font-smoothing: grayscale; /* För Firefox på Mac */
         }
 
         #custom-contact-form {

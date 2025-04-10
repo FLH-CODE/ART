@@ -26,60 +26,37 @@
             background-color: #ebebeb;
             -webkit-font-smoothing: antialiased; /* För Safari och Chrome */
             -moz-osx-font-smoothing: grayscale; /* För Firefox på Mac */
-        }
+              }
 
-        .slide-up {
-            transform: translateY(-100%); /* Slide the page up */
-        }
-
-        .header {
+        .headerx {
             padding: 20px;
          }
 
-        .header h1 {
+        .headerx h1 {
             font-size: 4em;
             margin: 0;
             font-family: 'CircularStd-Bold', Arial, sans-serif;
             font-style: bold;
         }
 
-        .header h2 {
+        .headerx h2 {
             font-size: 2em;
             margin: 0;
             font-family: 'CircularStd-Bold', Arial, sans-serif;
             font-style: bold;
         }
 
-        .flexColumn {
-            margin-right: 40px;
-        }
-
-        .flexColumn p {
-            font-size: 1.3em;
-            color: #000000;
-            font-family: 'IvarText-Regular', Arial, sans-serif;
-        }
-
         /* New vision-content structure with table layout to ensure consistent widths */
         .vision-content {
             position: relative;
-            top: 200px;
-            width: 100%;
-            max-width: 100em;
-            min-width: 50em;
-            table-layout: fixed;
-            display: table;
+            width: 60%;
         }
 
         /* Use table cells for consistent column widths */
         .vision-column {
             display: table-cell;
-            width: 50%;
             vertical-align: top;
             padding-right: 40px;
-            /* Prevent any transitions or animations */
-            transition: none !important;
-            animation: none !important;
         }
 
         /* Remove right padding from last column */
@@ -88,49 +65,29 @@
         }
 
         .vision-column p {
-            font-size: 1.3em;
+             font-size: 1.3em;
             color: #000000;
             font-family: 'IvarText-Regular', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            box-sizing: border-box;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            min-width: 0; /* Prevent text from forcing minimum width */
-            max-width: 100%; /* Ensure text doesn't exceed container */
-            display: block; /* Force block rendering */
-        }
-
-        /* Fix paragraph rendering during transitions */
-        .form-page .vision-content,
-        .form-page.active .vision-content,
-        .form-page.slide-up-in .vision-content,
-        .form-page.slide-up-out .vision-content,
-        .form-page.slide-down-in .vision-content,
-        .form-page.slide-down-out .vision-content {
-            width: 100%;
-            max-width: 100em;
         }
 
         .art-logo {
-            position: absolute;
+            position: fixed;
             right: 20px;
             top: 20px;
             width: 80px;
             height: auto;
         }
 
-        .header-title {
+        .headerx-title {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            align-items: left;
+
         }
     </style>
 </head>
 <body>
-            <div class="header">
-                <div class="header-title">
+            <div class="headerx">
+                <div class="headerx-title">
                     <h2>HÅLLBARHETSVISION</h2>
                     <img src="Symbols/ART.svg" alt="ART Logo" class="art-logo">
                 </div>
