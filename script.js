@@ -109,7 +109,21 @@ async function loadPage(index, direction = 'forward') {
 
     }, 500);
 
+    // Update button visibility based on current page
     document.getElementById('exportBtn').style.display = (index === pages.length - 1) ? 'inline-block' : 'none';
+    
+    // Hide next button on last page, show it otherwise
+    const nextButton = document.querySelector('button[onclick="nextPage()"]');
+    if (nextButton) {
+      nextButton.style.display = (index === pages.length - 1) ? 'none' : 'inline-block';
+    }
+    
+    // Hide prev button on first page, show it otherwise
+    const prevButton = document.querySelector('button[onclick="prevPage()"]');
+    if (prevButton) {
+      prevButton.style.display = (index === 0) ? 'none' : 'inline-block';
+    }
+    
     currentPage = index;
 
   } catch (error) {

@@ -63,17 +63,17 @@
     nav {
       position: fixed; /* Fix the position on the screen */
       bottom: 20px; /* Position it near the bottom of the screen */
-      left: 50%; /* Center it horizontally */
+      left: 80%; /* Center it horizontally */
       transform: translateX(-50%); /* Adjust for centering */
       z-index: 1000; /* Ensure it stays in the foreground */
-      background-color: rgba(255, 255, 255, 0.9); /* Add a semi-transparent background */
       padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+
     }
 
     nav button {
       margin: 0 5px; /* Add spacing between buttons */
+      width: 60px;
+      height: 60px;
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
@@ -90,10 +90,14 @@
 
 
   <nav>
-    <button onclick="prevPage()">Previous</button>
-    <button onclick="nextPage()">Next</button>
+    <button onclick="prevPage()"style="background: none; border: none; cursor: pointer;">
+      <img src="/Symbols/sidpil.svg" alt="Click me" style="transform: rotate(180deg);"></button>
+
+    <button onclick="nextPage()"style="background: none; border: none; cursor: pointer;">
+      <img src="/Symbols/sidpil.svg" alt="Click me" ></button>
+
     <button id="exportBtn" style="display: none;" onclick="exportPDF()">Export as PDF</button>
-    <button onclick="resetForm()">Reset</button> <!-- Add reset button -->
+    <button id="resetBtn" style="display: none;" onclick="resetForm()">Reset</button> <!-- Hidden reset button -->
   </nav>
 </body>
 </html>
