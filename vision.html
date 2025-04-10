@@ -34,8 +34,7 @@
 
         .header {
             padding: 20px;
-            position: relative;  /* For absolute positioning of child elements */
-        }
+         }
 
         .header h1 {
             font-size: 4em;
@@ -51,16 +50,6 @@
             font-style: bold;
         }
 
-        .content {
-            position: relative;
-            top: 200px;
-            display: flex;    
-            width: 100%;
-            max-width: 100em;
-            min-width: 50em;
-            flex-shrink: 0; /* Prevent shrinking during transitions */
-        }
-
         .flexColumn {
             margin-right: 40px;
         }
@@ -69,6 +58,59 @@
             font-size: 1.3em;
             color: #000000;
             font-family: 'IvarText-Regular', Arial, sans-serif;
+        }
+
+        /* New vision-content structure with table layout to ensure consistent widths */
+        .vision-content {
+            position: relative;
+            top: 200px;
+            width: 100%;
+            max-width: 100em;
+            min-width: 50em;
+            table-layout: fixed;
+            display: table;
+        }
+
+        /* Use table cells for consistent column widths */
+        .vision-column {
+            display: table-cell;
+            width: 50%;
+            vertical-align: top;
+            padding-right: 40px;
+            /* Prevent any transitions or animations */
+            transition: none !important;
+            animation: none !important;
+        }
+
+        /* Remove right padding from last column */
+        .vision-column:last-child {
+            padding-right: 0;
+        }
+
+        .vision-column p {
+            font-size: 1.3em;
+            color: #000000;
+            font-family: 'IvarText-Regular', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            box-sizing: border-box;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            min-width: 0; /* Prevent text from forcing minimum width */
+            max-width: 100%; /* Ensure text doesn't exceed container */
+            display: block; /* Force block rendering */
+        }
+
+        /* Fix paragraph rendering during transitions */
+        .form-page .vision-content,
+        .form-page.active .vision-content,
+        .form-page.slide-up-in .vision-content,
+        .form-page.slide-up-out .vision-content,
+        .form-page.slide-down-in .vision-content,
+        .form-page.slide-down-out .vision-content {
+            width: 100%;
+            max-width: 100em;
         }
 
         .art-logo {
@@ -84,10 +126,9 @@
             align-items: center;
             justify-content: space-between;
         }
-
     </style>
 </head>
-<body class="usage-page">
+<body>
             <div class="header">
                 <div class="header-title">
                     <h2>HÅLLBARHETSVISION</h2>
@@ -95,11 +136,11 @@
                 </div>
                 <h1>ART</h1>
 
-                <div class="content">
-                    <div class="flexColumn">
+                <div class="vision-content">
+                    <div class="vision-column">
                         <p>Vi på FOJAB arbetar för en långsiktigt hållbar utveckling och är övertygade om att arkitektur kan bidra till att lösa samhällsutmaningar och skapa mervärden för alla. Gemensamt behöver vi ta krafttag för att snabbt minska koldioxidutsläppen och hitta fler lösningar på de stora utmaningarna kopplade till social hållbarhet och folkhälsa som vi står inför. Vi måste tillsammans tänka cirkulärt i alla skeden, hjälpas åt att omformulera tidigare sanningar och bidra till att mynta nya begrepp och arbetssätt.</p>
                     </div>
-                    <div class="flexColumn">
+                    <div class="vision-column">
                         <p>Tre aspekter är centrala för oss när vi pratar om hållbarhet kopplat till vår verksamhet: Användning, Tid och Resurser. Det vi skapar ska kunna användas så mycket som möjligt under så lång tid som möjligt med ett så litet fotavtryck som möjligt. Tillsammans med våra kunder gör vi en bedömning av hållbarhetspotentialen i varje enskilt uppdrag som sedan utgör grund för målformulering, beslut och utvärdering. När vi verkar för multianvändning, kärlek över tid och rätt material på rätt plats skapar vi hållbar arkitektur på riktigt!</p>
                     </div>
             </div>
