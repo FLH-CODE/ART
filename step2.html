@@ -155,21 +155,24 @@
             font-style: normal;
         }
         .column textarea {
-            width: calc(100% - 20px);
-            height: 100px;
-            padding: 10px;
-            border: none;
-            background: linear-gradient(to bottom, #5f5f5f 0.1px, transparent 1px) repeat-y; /* Ändra färg och tjocklek här */
-            background-size: 100% 20px; /* Justera avståndet mellan linjerna */
-            background-position: 0 5px; /* Flytta ned linjerna några pixlar */
-            margin-top: 10px;
-            font-family: 'CircularStd-Book', Arial, sans-serif;
-            font-size: 0.9em;
-            color: #000000;
-            line-height: 20px;
-            resize: none;
-            outline: none; /* Ta bort den svarta rutan */
-        }
+        width: calc(100% - 20px);
+        height: auto; /* Change from fixed height to auto */
+        min-height: 150px; /* Set minimum height */
+        max-height: 150px; /* Maximum height based on 10 rows */
+        padding: 10px;
+        border: none;
+        background: linear-gradient(to bottom, #5f5f5f 0.1px, transparent 1px) repeat-y;
+        background-size: 100% 20px;
+        background-position: 0 5px;
+        margin-top: 10px;
+        font-family: 'CircularStd-Book', Arial, sans-serif;
+        font-size: 0.9em;
+        color: #000000;
+        line-height: 20px;
+        resize: none;
+        outline: none;
+        overflow: hidden; /* Hide scrollbars */
+}
         
 
         .submit-button {

@@ -45,6 +45,38 @@ function selectNumber(element, categoryId) {
 // Make selectNumber globally accessible
 window.selectNumber = selectNumber;
 
+// Function to limit textarea input to 8 rows
+function limitTextareaRows() {
+    const textareas = document.querySelectorAll('textarea');
+    const MAX_ROWS = 8;
+    const LINE_HEIGHT = 20; // Based on your CSS line-height setting
+    
+    textareas.forEach(textarea => {
+        textarea.addEventListener('input', function() {
+            const lines = this.value.split('\n');
+            
+            // Check if we've exceeded max rows
+            if (lines.length > MAX_ROWS) {
+                // Keep only the first 8 rows
+                this.value = lines.slice(0, MAX_ROWS).join('\n');
+            }
+            
+            // For lines that exceed the width and cause wrapping
+            if (this.scrollHeight > (MAX_ROWS * LINE_HEIGHT) + 20) { // +20 for padding
+                const currentText = this.value;
+                
+                // Gradually trim text until it fits within 8 rows
+                while (this.scrollHeight > (MAX_ROWS * LINE_HEIGHT) + 20 && this.value.length > 0) {
+                    this.value = this.value.slice(0, -1);
+                }
+            }
+        });
+        
+        // Apply constraints immediately to any existing text
+        textarea.dispatchEvent(new Event('input'));
+    });
+}
+
 async function loadPage(index, direction = 'forward') {
   if (isTransitioning) return; // Prevent multiple transitions
   isTransitioning = true;
@@ -106,6 +138,9 @@ async function loadPage(index, direction = 'forward') {
       // Reset progress for the current page and update the chart
       updateChart();
       updateSummaryChart();
+
+      // Apply textarea row limiting after page is loaded
+      limitTextareaRows();
 
     }, 500);
 
@@ -748,10 +783,49 @@ function waitForChartRender(chartElement, timeout = 5000) {
 
 // Make exportPDF globally accessible
 async function exportPDF() {
-    if (!window.jspdf) {
-        alert('PDF library not loaded. Please try again later.');
-        return;
-    }
+    // Add this style block to fix textareas in PDF export
+    const textareaFixStyle = document.createElement('style');
+    textareaFixStyle.textContent = `
+        #pdf-render-container textarea {
+            min-height: 160px !important;
+            height: auto !important;
+            max-height: none !important;
+            resize: none !important;
+            overflow: visible !important;
+            white-space: pre-wrap !important;
+            line-height: 20px !important;
+            background: linear-gradient(to bottom, #5f5f5f 0.1px, transparent 1px) repeat-y !important;
+            background-size: 100% 20px !important;
+            background-position: 0 5px !important;
+            border: none !important;
+            padding: 10px !important;
+            font-family: 'CircularStd-Book', Arial, sans-serif !important;
+            font-size: 0.9em !important;
+            display: block !important;
+            box-sizing: border-box !important;
+        }
+        
+        .textarea-replacement {
+            min-height: 160px !important;
+            height: auto !important;
+            max-height: none !important;
+            padding: 10px !important;
+            border: none !important;
+            background: linear-gradient(to bottom, #5f5f5f 0.1px, transparent 1px) repeat-y !important;
+            background-size: 100% 20px !important;
+            background-position: 0 5px !important;
+            margin-top: 10px !important;
+            margin-bottom: 10px !important;
+            font-family: 'CircularStd-Book', Arial, sans-serif !important;
+            font-size: 0.9em !important;
+            white-space: pre-wrap !important;
+            line-height: 20px !important;
+            box-sizing: border-box !important;
+            display: block !important;
+            width: calc(100% - 20px) !important;
+        }
+    `;
+    document.head.appendChild(textareaFixStyle);
 
     // Backup the current form and progress data before PDF export
     const formDataBackup = JSON.parse(localStorage.getItem('formData')) || {};
@@ -825,12 +899,41 @@ async function exportPDF() {
     renderContainer.style.left = '-9999px';
     const multiplier = 0.9; // Define a multiplier variable
     renderContainer.style.width = `${2000 * multiplier}px`;
-    renderContainer.style.height = `${1000 * multiplier}px`;
+    renderContainer.style.height = `${1100 * multiplier}px`;
     renderContainer.style.overflow = 'hidden';
     renderContainer.style.backgroundColor = '#ebebeb';//canvas background color
     document.body.appendChild(renderContainer);
 
     try {
+        // Inside the try block, add this function to modify textareas before rendering
+        const fixTextareasForRendering = (container) => {
+            container.querySelectorAll('textarea').forEach(textarea => {
+                // Create a div to replace the textarea for rendering
+                const replacementDiv = document.createElement('div');
+                replacementDiv.className = 'textarea-replacement';
+                
+                // Get the text content, ensuring all lines are preserved
+                let content = textarea.value || '';
+                
+                // Ensure exactly 8 lines (or fill with empty lines if needed)
+                const lines = content.split('\n');
+                while (lines.length < 8) {
+                    lines.push(' '); // Add empty lines with a space to ensure they're visible
+                }
+                
+                // Join the lines back with <br> tags
+                content = lines.slice(0, 8).join('<br>');
+                
+                // Add the content to the replacement div
+                replacementDiv.innerHTML = content;
+                
+                // Replace the textarea with our div
+                if (textarea.parentNode) {
+                    textarea.parentNode.replaceChild(replacementDiv, textarea);
+                }
+            });
+        };
+
         // Use a modified array of pages for the PDF export
         const pdfPages = ['project_info_print.html', 'vision.html', 'step1.html', 'step2.html', 'step3.html', './summary.html'];
         
@@ -1128,6 +1231,11 @@ async function exportPDF() {
                 }
             }
 
+            // Before rendering, add this line after populating renderContainer
+            if (i > 0) {
+                fixTextareasForRendering(renderContainer);
+            }
+
             const canvas = await html2canvas(renderContainer, {
                 scale: 2.0,
                 useCORS: true,
@@ -1224,6 +1332,10 @@ async function exportPDF() {
             document.head.removeChild(noAnimationsStyle);
         }
 
+        if (document.head.contains(textareaFixStyle)) {
+            document.head.removeChild(textareaFixStyle);
+        }
+
         setTimeout(() => {
             if (document.body.contains(loadingDiv)) {
                 document.body.removeChild(loadingDiv);
@@ -1299,7 +1411,7 @@ function positionChartLabels(container, categories) {
 window.onload = () => {
     clearAllData();
     loadPage(0); // Load the first page
-
+    limitTextareaRows(); // Apply textarea row limiting on initial load
 };
 
 // Attach functions to the global window object to ensure they are accessible from the HTML
