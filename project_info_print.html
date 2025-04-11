@@ -10,29 +10,18 @@
             src: url('font/CircularStd-Bold.otf') format('opentype');
         }
 
-        body {
-            margin: 20px;
-            padding: 20px;
-            font-family: 'CircularStd-Bold', sans-serif;
-            background-color: #ebebeb; /* Set background color to match the other pages */
-            -webkit-font-smoothing: antialiased; /* För Safari och Chrome */
-            -moz-osx-font-smoothing: grayscale; /* För Firefox på Mac */
-        }
-
-        .header_a {
-            padding: 20px;
-         }
-
-        .header_a h1 {
-            font-size: 4em;
+        body, html {
             margin: 0;
-            font-family: 'CircularStd-Bold', Arial, sans-serif;
-            font-style: bold;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'CircularStd-Bold', sans-serif;
+            background-color: #ebebeb;
         }
 
         #custom-contact-form {
             max-width: 600px;
-            margin-left: 0;
+            margin: 0 auto;
             padding: 20px;
         }
 
@@ -40,7 +29,6 @@
             display: flex;
             align-items: center;
             margin-bottom: 1rem;
-            margin-top: 20px;
         }
 
         .form-group label {
@@ -52,16 +40,16 @@
         .form-group textarea {
             flex: 2;
             padding: 10px;
-            border: none;
-            background-color: transparent;
+            border: none; /* Remove border */
+            background-color: transparent; /* Make background transparent */
             color: #000;
         }
         
         .form-group .date-display {
             flex: 2;
             padding: 10px;
-            border: none;
-            background-color: transparent;
+            border: none; /* Remove border */
+            background-color: transparent; /* Make background transparent */
             color: #000;
             font-weight: bold;
         }
@@ -74,12 +62,9 @@
 </head>
 <body>
 
-    <div class="header_a">
-
+    <div class="header"></div>
 <div id="custom-contact-form">
     <h1>ART-Bestämning</h1>
-
-
     <div class="form-group">
         <label for="datum">Datum</label>
         <div class="date-display" id="datum-display"></div>

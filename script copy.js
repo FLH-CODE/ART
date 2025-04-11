@@ -823,7 +823,7 @@ async function exportPDF() {
     renderContainer.style.position = 'absolute';
     renderContainer.style.top = '-9999px';
     renderContainer.style.left = '-9999px';
-    const multiplier = 0.9; // Define a multiplier variable
+    const multiplier = 1; // Define a multiplier variable
     renderContainer.style.width = `${2000 * multiplier}px`;
     renderContainer.style.height = `${1000 * multiplier}px`;
     renderContainer.style.overflow = 'hidden';
@@ -933,7 +933,7 @@ async function exportPDF() {
                     const chartWrapper = document.createElement('div');
                     chartWrapper.style.position = 'absolute';
                     chartWrapper.style.width = '100%';
-                    chartWrapper.style.height = '1000px'; // Fixed height for the chart
+                    chartWrapper.style.height = '800px'; // Fixed height for the chart
                     chartWrapper.style.top = '50%';
                     chartWrapper.style.left = '0';
                     chartWrapper.style.transform = 'translateY(-50%)';
